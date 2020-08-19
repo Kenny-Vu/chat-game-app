@@ -1,0 +1,9 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Server storing chat&game app data",
+  "main": "index.js",
+  "repository": "https://github.com/Kenny-Vu/cb-i-4-final-project",
+  "author": "Kenny Vu",
+  "license": "MIT"
+}
