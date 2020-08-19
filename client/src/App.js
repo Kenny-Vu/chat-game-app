@@ -1,8 +1,23 @@
 import React from "react";
-import "./App.css";
+import styled from "styled-components";
+
+import GlobalStyles from "./GlobalStyles";
+import SideChat from "./components/SideChat";
 
 function App() {
-  return <div>noshipo</div>;
+  return (
+    <>
+      <GlobalStyles />
+      <Wrapper>
+        <SideChat />
+      </Wrapper>
+    </>
+  );
 }
+
+const Wrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
+`;
 
 export default App;
