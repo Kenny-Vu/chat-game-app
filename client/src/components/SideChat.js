@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 const SideChat = () => {
+  useEffect(() => {
+    fetch("/test")
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+  }, []);
+
   return (
     <Window>
       <h2>Feed</h2>
