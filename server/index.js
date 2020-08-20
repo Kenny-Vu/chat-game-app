@@ -14,7 +14,9 @@ const io = socketio(server);
 
 io.on("connection", (socket) => {
   console.log("a user connected!");
-
+  socket.on("input-send", ({ input }) => {
+    console.log(input);
+  });
   socket.on("disconnect", () => {
     console.log("user disconnected...");
   });

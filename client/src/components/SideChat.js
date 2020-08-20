@@ -8,15 +8,16 @@ const BASE_URL = "localhost:8000";
 const SideChat = () => {
   const [input, setInput] = useState("");
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(input);
+    socket.emit("input-send", { input });
+  };
+
   useEffect(() => {
     socket = io(BASE_URL);
     console.log(socket);
   }, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(input);
-  };
 
   return (
     <Window>
