@@ -22,7 +22,6 @@ express()
   .use(bodyParser.json())
   .use(express.urlencoded({ extended: false }))
   .use("/", express.static(__dirname + "/"))
-  .get("/test", handleFourOhFour)
   .listen(PORT, () => {
     console.info(`listening on http://localhost:${PORT}`);
   });

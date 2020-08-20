@@ -1,28 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const SideChat = () => {
-  useEffect(() => {
-    fetch("/test")
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }, []);
+  const [input, setInput] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(input);
+  };
 
   return (
     <Window>
-      <h2>Feed</h2>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-      </p>
-      <p>MAX 250 WORDS OR SOMETHING</p>
-
-      <ChatInput placeholder="Type something man...." />
+      <h2>Conversations</h2>
+      <ChatForm>
+        <ChatInput
+          placeholder="Type something man...."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <Submit type="submit" onClick={(e) => handleSubmit(e)}>
+          Send
+        </Submit>
+      </ChatForm>
     </Window>
   );
 };
@@ -33,14 +32,36 @@ const Window = styled.div`
   flex-direction: column;
   justify-content: space-between;
   right: 0;
-  height: 75%;
-  width: 30%;
+  height: 100%;
+  width: 40%;
+  border: solid;
+  h2 {
+    text-align: center;
+  }
+`;
+const ChatForm = styled.form`
+  display: flex;
+  justify-content: center;
   border: solid;
 `;
 const ChatInput = styled.textarea`
+  height: 3rem;
   width: 100%;
   resize: none;
-  box-shadow: 0 0 2px grey;
+  font-size: 1.5rem;
+  &&:focus {
+    outline: none;
+    border: none;
+  }
+`;
+const Submit = styled.button`
+  background: #4287f5;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 1rem;
 `;
 
 export default SideChat;
