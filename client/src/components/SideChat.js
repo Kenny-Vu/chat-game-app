@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import io from "socket.io-client";
+
+let socket;
+const BASE_URL = "localhost:8000";
 
 const SideChat = () => {
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    socket = io(BASE_URL);
+    console.log(socket);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
