@@ -41,8 +41,9 @@ const SideChat = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(`input: ${input}`);
-    socket.emit("input-send", { input, id: socket.id }); //send input to BE
+    socket.emit("input-send", { input, id: socket.id, room }); //send input to BE
     setInput("");
+    setFeed((feed) => [...feed, { text: input, id: socket.id }]);
   };
   return (
     <Window>

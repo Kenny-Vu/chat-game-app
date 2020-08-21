@@ -18,16 +18,14 @@ io.on("connection", (socket) => {
   socket.on("user-joins", ({ userName, room }) => {
     socket.join(room);
     socket.emit("welcome", { text: `Welcome ${userName}!`, id: socket.id });
-    socket.broadcast
-      .to(room)
-      .emit("friend-joined", {
-        text: `${userName} has joined!`,
-        id: socket.id,
-      });
+    socket.broadcast.to(room).emit("friend-joined", {
+      text: `${userName} has joined!`,
+      id: socket.id,
+    });
   });
-  socket.on("input-send", ({ input, id }) => {
+  socket.on("input-send", ({ input, id, room }) => {
     //each socket automatically generates a random unique id
-    socket.emit("display-message", { text: input, id });
+    socket.to(room).emit("display-message", { text: input, id });
     console.log(id);
   });
   socket.on("disconnect", () => {
