@@ -6,7 +6,6 @@ const initialState = {
 };
 
 const directionReducer = (state = initialState, action) => {
-  console.log(action);
   switch (action.type) {
     case "MOVE_DOWN": {
       return initialState;

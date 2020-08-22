@@ -15,11 +15,11 @@ const io = socketio(server); //wraps io around server
 
 io.on("connection", (socket) => {
   console.log("a user connected!"); // When the client connects The server is notified
-  socket.on("user-joins", ({ userName, room }) => {
+  socket.on("user-joins", ({ user, room }) => {
     socket.join(room);
-    socket.emit("welcome", { text: `Welcome ${userName}!`, id: socket.id });
+    socket.emit("welcome", { text: `Welcome ${user}!`, id: socket.id });
     socket.broadcast.to(room).emit("friend-joined", {
-      text: `${userName} has joined!`,
+      text: `${user} has joined!`,
       id: socket.id,
     });
   });

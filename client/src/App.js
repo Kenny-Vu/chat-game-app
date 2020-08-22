@@ -1,23 +1,21 @@
 import React from "react";
-import styled from "styled-components";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyles from "./GlobalStyles";
-import SideChat from "./components/SideChat";
+
+import Home from "./components/Home";
+import Main from "./components/Main";
 
 function App() {
   return (
-    <>
+    <Router>
       <GlobalStyles />
-      <Wrapper>
-        <SideChat />
-      </Wrapper>
-    </>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/main" component={Main} />
+      </Switch>
+    </Router>
   );
 }
-
-const Wrapper = styled.div`
-  height: 100vh;
-  width: 100vw;
-`;
 
 export default App;

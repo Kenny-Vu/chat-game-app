@@ -1,30 +1,26 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import io from "socket.io-client";
+import styled from "styled-components";
 
 let socket;
 const BASE_URL = "localhost:8000"; // specify the port of the server
 
-const SideChat = () => {
+const SideChat = ({ room, user }) => {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState({ text: null, id: null });
   const [feed, setFeed] = useState([]);
-
-  const userName = "Penpen 🐧"; //for now user is static
-  const room = "club Penguin"; // hard coded room for now
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
     socket = io(BASE_URL);
 
-    socket.emit("user-joins", { userName, room });
+    socket.emit("user-joins", { user, room });
     socket.on("welcome", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
     });
     socket.on("friend-joined", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
     });
-    console.log(`socket: ${socket}`);
   }, []);
 
   //client receives user info from backend and adds user welcome message
@@ -40,7 +36,6 @@ const SideChat = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`input: ${input}`);
     socket.emit("input-send", { input, id: socket.id, room }); //send input to BE
     setInput("");
     setFeed((feed) => [...feed, { text: input, id: socket.id }]);
