@@ -7,4 +7,5 @@ export default createGlobalStyle`
 	border: 0;
 	box-sizing: border-box;
 	overflow: hidden;
+	font-family: "nunito"
 }`;

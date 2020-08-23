@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 
+import Message from "./Message";
+
 let socket;
 const BASE_URL = "localhost:8000"; // specify the port of the server
 
@@ -21,32 +23,33 @@ const SideChat = ({ room, user }) => {
     socket.on("friend-joined", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
     });
+    socket.on("friend-left", ({ text }) => {
+      setFeed((feed) => [...feed, { text }]);
+    });
   }, []);
 
   //client receives user info from backend and adds user welcome message
-
   useEffect(() => {
-    socket.on("display-message", ({ text, id }) => {
+    socket.on("display-message", ({ text, id, user }) => {
       setMessage({ text, id });
-      setFeed([...feed, { text, id }]);
+      setFeed([...feed, { text, id, user }]);
     });
-    console.log(message);
-    console.log(feed);
   }, [feed]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit("input-send", { input, id: socket.id, room }); //send input to BE
+    socket.emit("input-send", { input, id: socket.id }); //send input to BE
     setInput("");
-    setFeed((feed) => [...feed, { text: input, id: socket.id }]);
+    setFeed((feed) => [...feed, { text: input, id: socket.id, user }]);
   };
+  console.log(feed);
   return (
     <Window>
-      <h2>Conversations</h2>
+      <h2>{room}</h2>
       <div>
         {feed
           ? feed.map((message) => {
-              return <div>{message.text}</div>;
+              return <Message message={message} user={user} />;
             })
           : null}
       </div>
@@ -81,6 +84,9 @@ const Window = styled.div`
     background: #4287f5;
     color: white;
   }
+`;
+const MessageContainer = styled.div`
+  border: solid;
 `;
 const ChatForm = styled.form`
   display: flex;
