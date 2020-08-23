@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 
+import { keyGenerator } from "../../helpers";
+
 import Message from "./Message";
 
 let socket;
@@ -42,14 +44,19 @@ const SideChat = ({ room, user }) => {
     setInput("");
     setFeed((feed) => [...feed, { text: input, id: socket.id, user }]);
   };
-  console.log(feed);
   return (
     <Window>
       <h2>{room}</h2>
       <div>
         {feed
           ? feed.map((message) => {
-              return <Message message={message} user={user} />;
+              return (
+                <Message
+                  key={() => keyGenerator()}
+                  message={message}
+                  user={user}
+                />
+              );
             })
           : null}
       </div>
@@ -71,13 +78,12 @@ const SideChat = ({ room, user }) => {
 };
 
 const Window = styled.div`
-  position: fixed;
+  flex: 1, 2;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   right: 0;
   height: 100%;
-  width: 40%;
   box-shadow: 0 0 4px grey;
   h2 {
     text-align: center;
