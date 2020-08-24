@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
     //luckily, socket.id will always be the socket that is emitting the signal. In this case, the user that left
     const user = getUser(socket.id);
     socket.broadcast.to(user.room).emit("friend-left", {
-      text: "friend has left the chat room",
+      text: `${user.user} has left the chat room`,
     });
   });
 });

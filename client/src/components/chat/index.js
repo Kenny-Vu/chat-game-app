@@ -14,7 +14,7 @@ const SideChat = ({ room, user }) => {
   const [message, setMessage] = useState({ text: null, id: null });
   const [feed, setFeed] = useState([]);
 
-  const messageRef = useRef(null);
+  const messageRef = useRef(null); //ref used for autoscrolling
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
@@ -30,6 +30,9 @@ const SideChat = ({ room, user }) => {
     socket.on("friend-left", ({ text }) => {
       setFeed((feed) => [...feed, { text }]);
     });
+    return () => {
+      socket.current.close();
+    };
   }, []);
 
   //client receives user info from backend and adds user welcome message
@@ -65,11 +68,7 @@ const SideChat = ({ room, user }) => {
         {feed
           ? feed.map((message, index) => {
               return (
-                <Message
-                  key={`${keyGenerator()}-${index}`}
-                  message={message}
-                  user={user}
-                />
+                <Message key={keyGenerator()} message={message} user={user} />
               );
             })
           : null}
