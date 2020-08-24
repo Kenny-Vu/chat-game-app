@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 
@@ -13,6 +13,8 @@ const SideChat = ({ room, user }) => {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState({ text: null, id: null });
   const [feed, setFeed] = useState([]);
+
+  const messageRef = useRef(null);
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
@@ -37,6 +39,17 @@ const SideChat = ({ room, user }) => {
       setFeed([...feed, { text, id, user }]);
     });
   }, [feed]);
+  //handles autoscroll
+  const scrollToBottom = () => {
+    messageRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+  //handles autoscroll
+  useEffect(() => {
+    scrollToBottom();
+  }, [feed]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,19 +60,22 @@ const SideChat = ({ room, user }) => {
   return (
     <Window>
       <h2>{room}</h2>
-      <div>
+
+      <Conversation>
         {feed
-          ? feed.map((message) => {
+          ? feed.map((message, index) => {
               return (
                 <Message
-                  key={() => keyGenerator()}
+                  key={`${keyGenerator()}-${index}`}
                   message={message}
                   user={user}
                 />
               );
             })
           : null}
-      </div>
+        <div ref={messageRef}></div>
+      </Conversation>
+
       <ChatForm>
         <ChatInput
           placeholder="Type something man...."
@@ -91,8 +107,11 @@ const Window = styled.div`
     color: white;
   }
 `;
-const MessageContainer = styled.div`
-  border: solid;
+
+const Conversation = styled.div`
+  height: 100%;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 `;
 const ChatForm = styled.form`
   display: flex;

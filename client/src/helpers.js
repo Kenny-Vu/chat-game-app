@@ -31,8 +31,9 @@ export const keyGenerator = () => {
   ];
   const firstLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
   const secondLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
-  const key = num.split("");
-  key.splice(Math.floor(Math.random() * num.length), 0, firstLetter);
-  key.splice(Math.floor(Math.random() * num.length), 0, secondLetter);
-  return key.join("");
+  const combined = num.split("");
+  combined.splice(Math.floor(Math.random() * num.length), 0, firstLetter);
+  combined.splice(Math.floor(Math.random() * num.length), 0, secondLetter);
+  const key = combined.join("");
+  return key;
 };
