@@ -3,12 +3,12 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
 
 const socketio = require("socket.io");
 const http = require("http");
 
 const PORT = process.env.PORT || 8000;
-
 const router = require("./router");
 
 const app = express();
@@ -20,6 +20,7 @@ io.on("connection", (socket) => {
   socket.on("user-joins", ({ user, room }) => {
     addUser(socket.id, user, room);
     socket.join(room);
+    socket.emit("populate-feed", { messages });
     socket.emit("welcome", { text: `Welcome ${user}!`, id: socket.id });
     socket.broadcast.to(room).emit("friend-joined", {
       text: `${user} has joined!`,
@@ -29,6 +30,9 @@ io.on("connection", (socket) => {
   socket.on("input-send", ({ input, id }) => {
     const user = getUser(id);
     //each socket automatically generates a random unique id
+    //TEST - CONNECTING TO MONGODB ATLAS
+    // storeMessageData({ text: input, user: user.user, room: user.room });
+
     socket
       .to(user.room)
       .emit("display-message", { text: input, id, user: user.user });

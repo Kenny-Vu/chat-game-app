@@ -19,7 +19,9 @@ const Home = () => {
     if (!userName || !userRoom) {
       return; //create a error message later on to let user know they must fill the form
     }
-    dispatch(userJoins({ user: userName, room: userRoom }));
+    // dispatch(userJoins({ user: userName, room: userRoom })); do not need redux at the moment
+    sessionStorage.setItem("userName", userName); // TEST
+    sessionStorage.setItem("userRoom", userRoom); // TEST
     setUserName("");
     setUserRoom("");
     history.push("/main");

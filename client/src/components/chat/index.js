@@ -9,11 +9,12 @@ import Message from "./Message";
 let socket;
 const BASE_URL = "localhost:8000"; // specify the port of the server
 
-const SideChat = ({ room, user }) => {
-  const [input, setInput] = useState("");
-  const [message, setMessage] = useState({ text: null, id: null });
-  const [feed, setFeed] = useState([]);
+//IF USER AND ROOM EXISTS IN SESSIONSTORAGE THEN USE THAT RATHER THAN THE USER AND ROOM FROM REDUX/PROP
 
+const Chat = ({ room, user }) => {
+  const [input, setInput] = useState("");
+  const [feed, setFeed] = useState([]);
+  console.log(room);
   const messageRef = useRef(null); //ref used for autoscrolling
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
@@ -21,6 +22,12 @@ const SideChat = ({ room, user }) => {
     socket = io(BASE_URL);
 
     socket.emit("user-joins", { user, room });
+    socket.on("populate-feed", ({ messages }) => {
+      console.log(messages);
+      // messages.forEach((message) => {
+      //   setFeed((feed) => [...feed, { message }]);
+      // });
+    });
     socket.on("welcome", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
     });
@@ -38,7 +45,6 @@ const SideChat = ({ room, user }) => {
   //client receives user info from backend and adds user welcome message
   useEffect(() => {
     socket.on("display-message", ({ text, id, user }) => {
-      setMessage({ text, id });
       setFeed([...feed, { text, id, user }]);
     });
   }, [feed]);
@@ -137,4 +143,4 @@ const Submit = styled.button`
   font-size: 1rem;
 `;
 
-export default SideChat;
+export default Chat;
