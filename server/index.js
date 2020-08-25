@@ -15,12 +15,39 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server); //wraps io around server
 
+//MONGO <-------------->
+const MongoClient = require("mongodb").MongoClient;
+const assert = require("assert");
+
+require("dotenv").config();
+const { MONGO_URI } = process.env;
+
+// const REACT_APP_MONGO_URI =
+//   "mongodb+srv://client:12345@chatgame-cluster.fvrub.gcp.mongodb.net/chatGameDB?retryWrites=true&w=majority";
+
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+//<-------------->
+
 io.on("connection", (socket) => {
   console.log("a user connected!"); // When the client connects The server is notified
-  socket.on("user-joins", ({ user, room }) => {
+  socket.on("user-joins", async ({ user, room }) => {
     addUser(socket.id, user, room);
     socket.join(room);
-    socket.emit("populate-feed", { messages });
+    //TESTING MONGO
+    const client = await MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("chatGameDB");
+    try {
+      const result = await db.collection("chat-data").find().toArray();
+      socket.emit("populate-feed", { messages: result });
+    } catch (err) {
+      console.log(err);
+    }
+    client.close();
+
     socket.emit("welcome", { text: `Welcome ${user}!`, id: socket.id });
     socket.broadcast.to(room).emit("friend-joined", {
       text: `${user} has joined!`,

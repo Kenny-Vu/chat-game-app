@@ -2,6 +2,16 @@ import React from "react";
 import styled from "styled-components";
 
 const Message = ({ message, user }) => {
+  const messageColor = (message, user) => {
+    let color = "rgba(128,128,128,0.2)";
+    if (message.user) {
+      if (message.user == user) {
+        color = "#53d769";
+      } else color = "#5fc9f8";
+    }
+    return color;
+  };
+
   return (
     <MessageContainer
       style={{
@@ -13,7 +23,7 @@ const Message = ({ message, user }) => {
       </Author>
       <Text
         style={{
-          background: message.user !== user ? "#5fc9f8" : "#53d769",
+          background: messageColor(message, user),
         }}
       >
         {message.text}

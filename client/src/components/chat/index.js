@@ -24,9 +24,13 @@ const Chat = ({ room, user }) => {
     socket.emit("user-joins", { user, room });
     socket.on("populate-feed", ({ messages }) => {
       console.log(messages);
-      // messages.forEach((message) => {
-      //   setFeed((feed) => [...feed, { message }]);
-      // });
+      messages.forEach((message) => {
+        setFeed((feed) => [
+          ...feed,
+          { text: message.text, id: message.id, user: message.user },
+        ]);
+      });
+      console.log(feed);
     });
     socket.on("welcome", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
@@ -72,7 +76,7 @@ const Chat = ({ room, user }) => {
 
       <Conversation>
         {feed
-          ? feed.map((message, index) => {
+          ? feed.map((message) => {
               return (
                 <Message key={keyGenerator()} message={message} user={user} />
               );
