@@ -22,9 +22,6 @@ const assert = require("assert");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
 
-// const REACT_APP_MONGO_URI =
-//   "mongodb+srv://client:12345@chatgame-cluster.fvrub.gcp.mongodb.net/chatGameDB?retryWrites=true&w=majority";
-
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -36,13 +33,14 @@ io.on("connection", (socket) => {
   socket.on("user-joins", async ({ user, room }) => {
     addUser(socket.id, user, room);
     socket.join(room);
-    //TESTING MONGO
+    //conecting to Mongo
     const client = await MongoClient(MONGO_URI, options);
     await client.connect();
     const db = client.db("chatGameDB");
     try {
       const result = await db.collection("chat-data").find().toArray();
-      socket.emit("populate-feed", { messages: result });
+      const roomMessages = result.filter((message) => message.room === room); //retrieving room's chat history
+      socket.emit("populate-feed", { messages: roomMessages }); //sending chat history to client
     } catch (err) {
       console.log(err);
     }
@@ -57,8 +55,8 @@ io.on("connection", (socket) => {
   socket.on("input-send", ({ input, id }) => {
     const user = getUser(id);
     //each socket automatically generates a random unique id
-    //TEST - CONNECTING TO MONGODB ATLAS
-    // storeMessageData({ text: input, user: user.user, room: user.room });
+    //Storing user message to Mongo
+    storeMessageData({ text: input, user: user.user, room: user.room });
 
     socket
       .to(user.room)
