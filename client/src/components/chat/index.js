@@ -48,7 +48,7 @@ const Chat = ({ room, user }) => {
     socket.on("display-message", ({ text, id, user }) => {
       setFeed((feed) => [...feed, { text, id, user }]);
     });
-  }, [feed]);
+  }, [setFeed]);
   //handles autoscroll
   const scrollToBottom = () => {
     messageRef.current.scrollIntoView({
