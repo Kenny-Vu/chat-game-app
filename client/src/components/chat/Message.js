@@ -5,7 +5,7 @@ const Message = ({ message, user }) => {
   const messageColor = (message, user) => {
     let color = "rgba(128,128,128,0.2)";
     if (message.user) {
-      if (message.user == user) {
+      if (message.user === user) {
         color = "#53d769";
       } else color = "#5fc9f8";
     }

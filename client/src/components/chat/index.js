@@ -14,7 +14,6 @@ const BASE_URL = "localhost:8000"; // specify the port of the server
 const Chat = ({ room, user }) => {
   const [input, setInput] = useState("");
   const [feed, setFeed] = useState([]);
-  console.log(room);
   const messageRef = useRef(null); //ref used for autoscrolling
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
@@ -23,14 +22,12 @@ const Chat = ({ room, user }) => {
 
     socket.emit("user-joins", { user, room });
     socket.on("populate-feed", ({ messages }) => {
-      console.log(messages);
       messages.forEach((message) => {
         setFeed((feed) => [
           ...feed,
           { text: message.text, id: message.id, user: message.user },
         ]);
       });
-      console.log(feed);
     });
     socket.on("welcome", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
@@ -49,7 +46,7 @@ const Chat = ({ room, user }) => {
   //client receives user info from backend and adds user welcome message
   useEffect(() => {
     socket.on("display-message", ({ text, id, user }) => {
-      setFeed([...feed, { text, id, user }]);
+      setFeed((feed) => [...feed, { text, id, user }]);
     });
   }, [feed]);
   //handles autoscroll
@@ -64,6 +61,7 @@ const Chat = ({ room, user }) => {
     scrollToBottom();
   }, [feed]);
 
+  //Function to add user's input to chat feed
   const handleSubmit = (e) => {
     e.preventDefault();
     socket.emit("input-send", { input, id: socket.id }); //send input to BE
