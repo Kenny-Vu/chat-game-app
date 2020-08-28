@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("quack!");
+const { getUserFromName } = require("./users");
+
+router.get("/users/:userName", (req, res) => {
+  // const user = getUserFromName()
+  res.status(200).json("quack!");
 });
 
 module.exports = router;

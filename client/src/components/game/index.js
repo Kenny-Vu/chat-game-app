@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import styled, { keyframes } from "styled-components";
-import useGameLoop from "../../hooks/useGameLoop"; //Might use later
+import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 import useInterval from "../../hooks/useInterval";
 const SPEED = 0.6;
 
-const Game = () => {
+const Game = ({ socket }) => {
   const [left, setLeft] = useState(null);
   const [top, setTop] = useState(null);
   const [keyPress, setKeyPress] = useState({});
+
+  const history = useHistory();
 
   const playerRef = useRef();
   const gameZoneRef = useRef();
@@ -39,11 +41,13 @@ const Game = () => {
   };
 
   useEffect(() => {
+    const gameZone = gameZoneRef.current;
+
     gameZoneRef.current.addEventListener("keydown", handleKeyPress);
     gameZoneRef.current.addEventListener("keyup", handleKeyUp);
     return () => {
-      gameZoneRef.current.removeEventListener("keydown", handleKeyPress);
-      gameZoneRef.current.removeEventListener("keyup", handleKeyUp);
+      gameZone.removeEventListener("keydown", handleKeyPress);
+      gameZone.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -74,6 +78,13 @@ const Game = () => {
     }
   });
 
+  const handleLogOut = () => {
+    socket.disconnect();
+    socket.close();
+    sessionStorage.clear();
+    history.push("/");
+  };
+
   return (
     <GameZone ref={gameZoneRef} tabIndex={0}>
       <Camera>
@@ -87,6 +98,9 @@ const Game = () => {
           />
         </Map>
       </Camera>
+      <div>
+        <button onClick={handleLogOut}>Logout</button>
+      </div>
     </GameZone>
   );
 };
@@ -95,6 +109,7 @@ const GameZone = styled.div`
   position: relative;
   flex: 2;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: grey;

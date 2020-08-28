@@ -1,25 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import styled from "styled-components";
 
 import { keyGenerator } from "../../helpers";
 
 import Message from "./Message";
 
-let socket;
-const BASE_URL = "localhost:8000"; // specify the port of the server
+// const BASE_URL = "localhost:8000"; // specify the port of the server
 
 //IF USER AND ROOM EXISTS IN SESSIONSTORAGE THEN USE THAT RATHER THAN THE USER AND ROOM FROM REDUX/PROP
 
-const Chat = ({ room, user }) => {
+const Chat = ({ socket, room, user }) => {
   const [input, setInput] = useState("");
   const [feed, setFeed] = useState([]);
   const messageRef = useRef(null); //ref used for autoscrolling
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
-    socket = io(BASE_URL);
-
     socket.emit("user-joins", { user, room });
     socket.on("populate-feed", ({ messages }) => {
       messages.forEach((message) => {
@@ -75,9 +72,13 @@ const Chat = ({ room, user }) => {
 
       <Conversation>
         {feed
-          ? feed.map((message) => {
+          ? feed.map((message, index) => {
               return (
-                <Message key={keyGenerator()} message={message} user={user} />
+                <Message
+                  key={keyGenerator() + index}
+                  message={message}
+                  user={user}
+                />
               );
             })
           : null}

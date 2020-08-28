@@ -69,6 +69,7 @@ io.on("connection", (socket) => {
     socket.broadcast.to(user.room).emit("friend-left", {
       text: `${user.user} has left the chat room`,
     });
+    removeUser(socket.id);
   });
 });
 

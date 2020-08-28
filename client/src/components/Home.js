@@ -1,66 +1,71 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
-
-import { userJoins } from "../actions";
 
 //Need to pass userName and Room info to the Main component.
 
 const Home = () => {
   const [userName, setUserName] = useState("");
   const [userRoom, setUserRoom] = useState("");
-  const dispatch = useDispatch();
+  const [error, setError] = useState(null);
+  // const dispatch = useDispatch();
   const history = useHistory();
+
+  // If user was already logged in then redirect him to chat/game room
+  if (sessionStorage.getItem("userName")) {
+    history.push("/main");
+  }
 
   //Function stores room name and user name inside redux
   const createRoom = (e) => {
     e.preventDefault();
     if (!userName || !userRoom) {
+      setError("Some information is missing!");
       return; //create a error message later on to let user know they must fill the form
     }
     // dispatch(userJoins({ user: userName, room: userRoom })); do not need redux at the moment
-    sessionStorage.setItem("userName", userName); // TEST
-    sessionStorage.setItem("userRoom", userRoom); // TEST
+    // instead we can store the use in session for browser refreshes
+    sessionStorage.setItem("userName", userName);
+    sessionStorage.setItem("userRoom", userRoom);
     setUserName("");
     setUserRoom("");
     history.push("/main");
-    history.goForward();
   };
 
   return (
     <Wrapper>
-      <h1>Homepage</h1>
+      <h1>Welcome</h1>
       <form>
         <div>
-          <input
-            placeholder="Enter username"
+          <Input
+            placeholder="Choose a name"
             value={userName}
             onChange={(e) => {
               setUserName(e.target.value);
             }}
-          ></input>
+          ></Input>
         </div>
         <div>
-          <input
-            placeholder="Enter room name"
+          <Input
+            placeholder="Choose a room name"
             value={userRoom}
             onChange={(e) => {
               setUserRoom(e.target.value);
             }}
-          ></input>
+          ></Input>
         </div>
         <div>
-          <button
+          <Submit
             type="submit"
             onClick={(e) => {
               createRoom(e);
             }}
           >
             Submit
-          </button>
+          </Submit>
         </div>
       </form>
+      {error && <div>{error}</div>}
     </Wrapper>
   );
 };
@@ -74,6 +79,15 @@ const Wrapper = styled.div`
   align-items: center;
   background: black;
   color: white;
+`;
+
+const Input = styled.input`
+  padding: 0.5rem;
+  margin: 0.5rem;
+`;
+
+const Submit = styled.button`
+  margin: 0 auto;
 `;
 
 export default Home;

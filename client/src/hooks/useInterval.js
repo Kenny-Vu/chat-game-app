@@ -1,5 +1,6 @@
 import React from "react";
 
+//used as a gameloop
 const useInterval = (callback, delay) => {
   const savedCallback = React.useRef();
 
