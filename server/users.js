@@ -24,7 +24,7 @@ const addUser = (id, user, room) => {
 const removeUser = (id) => {
   console.log("removed user!");
   delete users[`${id}`];
-  console.log(`remaining users: ${users}`);
+  console.log(users);
 };
 //get infos from a specific user
 const getUser = (id) => {

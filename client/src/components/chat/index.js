@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 // import io from "socket.io-client";
 import styled from "styled-components";
+import { Button } from "../../GlobalStyles";
 
 import { keyGenerator } from "../../helpers";
 
@@ -94,9 +95,9 @@ const Chat = ({ socket, room, user }) => {
             if (e.key === "Enter") handleSubmit(e);
           }}
         />
-        <Submit type="submit" onClick={(e) => handleSubmit(e)}>
+        <Button type="submit" onClick={(e) => handleSubmit(e)}>
           Send
-        </Submit>
+        </Button>
       </ChatForm>
     </Window>
   );
@@ -137,14 +138,14 @@ const ChatInput = styled.textarea`
     border: #4287f5 solid;
   }
 `;
-const Submit = styled.button`
-  background: #4287f5;
-  color: #fff;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem;
-  font-size: 1rem;
-`;
+// const Submit = styled.button`
+//   background: #4287f5;
+//   color: #fff;
+//   cursor: pointer;
+//   border: none;
+//   border-radius: 4px;
+//   padding: 0.5rem;
+//   font-size: 1rem;
+// `;
 
 export default Chat;

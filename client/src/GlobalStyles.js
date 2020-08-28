@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
 *{
@@ -9,3 +9,13 @@ export default createGlobalStyle`
 	overflow: hidden;
 	font-family: "nunito"
 }`;
+
+export const Button = styled.button`
+  background: #4287f5;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 1rem;
+`;

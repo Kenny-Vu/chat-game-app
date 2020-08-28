@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import useInterval from "../../hooks/useInterval";
+import { Button } from "../../GlobalStyles";
 const SPEED = 0.6;
 
 const Game = ({ socket }) => {
@@ -98,9 +99,9 @@ const Game = ({ socket }) => {
           />
         </Map>
       </Camera>
-      <div>
-        <button onClick={handleLogOut}>Logout</button>
-      </div>
+      <ActionBar>
+        <Button onClick={handleLogOut}>Logout</Button>
+      </ActionBar>
     </GameZone>
   );
 };
@@ -142,6 +143,13 @@ const Sprite = styled.div`
   background-repeat: no-repeat;
   height: 128px;
   width: 128px;
+`;
+const ActionBar = styled.div`
+  width: 80%;
+  border: solid;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  background: white;
 `;
 
 export default Game;

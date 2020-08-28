@@ -14,13 +14,19 @@ const Main = () => {
 
   return (
     <Wrapper>
-      <Game socket={socket} />
       {sessionStorage.getItem("userName") ? (
-        <Chat
-          socket={socket}
-          user={sessionStorage.getItem("userName")}
-          room={sessionStorage.getItem("userRoom")}
-        />
+        <>
+          <Game
+            socket={socket}
+            user={sessionStorage.getItem("userName")}
+            room={sessionStorage.getItem("userRoom")}
+          />
+          <Chat
+            socket={socket}
+            user={sessionStorage.getItem("userName")}
+            room={sessionStorage.getItem("userRoom")}
+          />
+        </>
       ) : (
         <Error />
       )}
