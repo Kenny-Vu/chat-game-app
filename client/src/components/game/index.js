@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import useGameLoop from "../../hooks/useGameLoop"; //Might use later
 import useInterval from "../../hooks/useInterval";
-const SPEED = 1;
+const SPEED = 0.6;
 
 const Game = () => {
   const [left, setLeft] = useState(null);
@@ -11,6 +11,7 @@ const Game = () => {
 
   const playerRef = useRef();
   const gameZoneRef = useRef();
+  const mapRef = useRef(); //set, but unsused for now...
 
   //function checks if one of the control keys for movement has been pressed
   const handleKeyPress = (e) => {
@@ -20,9 +21,11 @@ const Game = () => {
       e.code === "KeyD" ||
       e.code === "KeyS"
     ) {
+      //We don't need to remember the other keys in state. Only the key that is true is needed to move our character
       setKeyPress((prevKeyPress) => ({ [e.key]: true }));
     }
   };
+  //function
   const handleKeyUp = (e) => {
     if (
       e.code === "KeyW" ||
@@ -30,7 +33,8 @@ const Game = () => {
       e.code === "KeyD" ||
       e.code === "KeyS"
     ) {
-      setKeyPress((prevKeyPress) => ({ [e.key]: false }));
+      //in this case we do need to remember the state of the other keys. Otherwise, keys that are still true will be removed.Making our character stop
+      setKeyPress((prevKeyPress) => ({ ...prevKeyPress, [e.key]: false }));
     }
   };
 
@@ -45,38 +49,84 @@ const Game = () => {
 
   useInterval(() => {
     if (keyPress.a) {
+      if (left < -544) {
+        return;
+      }
       setLeft((prevLeft) => prevLeft - SPEED);
     }
     if (keyPress.d) {
+      if (left > 900) {
+        return;
+      }
       setLeft((prevLeft) => prevLeft + SPEED);
     }
     if (keyPress.w) {
+      if (top < -216) {
+        return;
+      }
       setTop((prevTop) => prevTop - SPEED);
     }
     if (keyPress.s) {
+      if (top > 520) {
+        return;
+      }
       setTop((prevTop) => prevTop + SPEED);
     }
   });
 
   return (
     <GameZone ref={gameZoneRef} tabIndex={0}>
-      <Sprite ref={playerRef} style={{ left: `${left}px`, top: `${top}px` }} />
+      <Camera>
+        <Map ref={mapRef} style={{ left: `${-left}px`, top: `${-top}px` }}>
+          <Sprite
+            ref={playerRef}
+            style={{
+              left: `${left + 256 * 2}px`,
+              top: `${top + 144 + 144 / 2}px`,
+            }} //we have to alter the position of the character to center him in the Camera div
+          />
+        </Map>
+      </Camera>
     </GameZone>
   );
 };
 
 const GameZone = styled.div`
+  position: relative;
   flex: 2;
-  background: url("https://cdn.vox-cdn.com/thumbor/FTGflhW34E25BS2EQcrCVE6U_Sk=/0x0:1920x1080/1200x675/filters:focal(1019x358:1325x664)/cdn.vox-cdn.com/uploads/chorus_image/image/62668832/ss_631d99cc6462cce94081032b7e600a6b87c3f7d3.0.jpg");
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: grey;
+`;
+
+const Camera = styled.div`
+  position: relative;
+  height: ${`${144 * 4}px`};
+  width: ${`${256 * 4}px`};
+  background: lightgray;
+  border: solid;
+`;
+
+const Map = styled.div`
+  position: relative;
+  height: ${`${144 * 6}px`};
+  width: ${`${256 * 6}px`};
+  background: url("assets/map.png");
   background-size: cover;
   background-repeat: no-repeat;
+  box-shadow: 0 0 16px black;
+  image-rendering: pixelated;
 `;
 const Sprite = styled.div`
   position: absolute;
-  background: url("assets/pichin.png");
-  background-size: 80px 80px;
-  height: 80px;
-  width: 80px;
+  background: url("assets/character.png");
+  image-rendering: pixelated;
+  background-size: 512px 512px;
+  background-position: -4px -16px;
+  background-repeat: no-repeat;
+  height: 128px;
+  width: 128px;
 `;
 
 export default Game;

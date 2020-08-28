@@ -39,7 +39,8 @@ const Chat = ({ room, user }) => {
       setFeed((feed) => [...feed, { text }]);
     });
     return () => {
-      socket.current.close();
+      socket.disconnect();
+      socket.close();
     };
   }, []);
 
