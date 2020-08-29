@@ -37,6 +37,13 @@ const Game = ({ socket, user, room }) => {
       setGameState((prevGameState) => playersArray);
       console.log(playersArray);
     });
+    socket.on("update-player-position", ({ players }) => {
+      console.log("working...");
+      delete players[`${socket.id}`];
+      const playersArray = Object.values(players);
+      setGameState((prevGameState) => playersArray);
+      console.log(gameState);
+    });
   }, []);
 
   //function checks if one of the control keys for movement has been pressed
@@ -74,6 +81,7 @@ const Game = ({ socket, user, room }) => {
       gameZone.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
+
   //MAIN GAME LOOP
   useInterval(() => {
     if (keyPress.a) {
@@ -81,24 +89,28 @@ const Game = ({ socket, user, room }) => {
         return;
       }
       setLeft((prevLeft) => prevLeft - SPEED);
+      socket.emit("move-player", { user, room, posX: left, posY: top });
     }
     if (keyPress.d) {
       if (left > 900) {
         return;
       }
       setLeft((prevLeft) => prevLeft + SPEED);
+      socket.emit("move-player", { user, room, posX: left, posY: top });
     }
     if (keyPress.w) {
       if (top < -216) {
         return;
       }
       setTop((prevTop) => prevTop - SPEED);
+      socket.emit("move-player", { user, room, posX: left, posY: top });
     }
     if (keyPress.s) {
       if (top > 520) {
         return;
       }
       setTop((prevTop) => prevTop + SPEED);
+      socket.emit("move-player", { user, room, posX: left, posY: top });
     }
   });
 

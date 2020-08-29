@@ -83,6 +83,11 @@ io.on("connection", (socket) => {
     const players = getAllPlayers();
     socket.to(room).emit("new-player-joins", { players });
   });
+  socket.on("move-player", ({ user, room, posX, posY }) => {
+    const players = getAllPlayers();
+    players[`${socket.id}`] = { user, room, posX, posY };
+    socket.to(room).emit("update-player-position", { players });
+  });
 
   socket.on("disconnect", () => {
     console.log("user disconnected..."); //notify server when user leaves
