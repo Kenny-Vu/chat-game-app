@@ -35,24 +35,17 @@ const options = {
   useUnifiedTopology: true,
 };
 //<-------------->
-
+//CHAT SOCKET SIGNALS
 io.on("connection", (socket) => {
   console.log("a user connected!"); // When the client connects The server is notified
   socket.on("user-joins", async ({ user, room }) => {
     addUser(socket.id, user, room);
     socket.join(room);
-    //conecting to Mongo
-    const client = await MongoClient(MONGO_URI, options);
-    await client.connect();
-    const db = client.db("chatGameDB");
-    try {
-      const result = await db.collection("chat-data").find().toArray();
-      const roomMessages = result.filter((message) => message.room === room); //retrieving room's chat history
-      socket.emit("populate-feed", { messages: roomMessages }); //sending chat history to client
-    } catch (err) {
-      console.log(err);
-    }
-    client.close();
+    //conecting to Mongo. Needs to be in async await for past messages to load first before the welcome message
+    await getAllMessagesInRoom(room).then((result) => {
+      console.log(result);
+      socket.emit("populate-feed", { messages: result });
+    });
 
     socket.emit("welcome", { text: `Welcome ${user}!`, id: socket.id });
     socket.broadcast.to(room).emit("friend-joined", {
@@ -72,7 +65,7 @@ io.on("connection", (socket) => {
       .emit("display-message", { text: input, id, user: user.user });
   });
 
-  //GAME Signals
+  //GAME SOCKET SIGNALS
   //adding new player
   socket.on("request-existing-players", () => {
     const players = getAllPlayers();

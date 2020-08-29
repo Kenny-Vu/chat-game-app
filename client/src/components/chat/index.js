@@ -6,6 +6,7 @@ import { Button } from "../../GlobalStyles";
 import { keyGenerator } from "../../helpers";
 
 import Message from "./Message";
+import Spinner from "../Spinner";
 
 // const BASE_URL = "localhost:8000"; // specify the port of the server
 
@@ -72,17 +73,19 @@ const Chat = ({ socket, room, user }) => {
       <h2>{room}</h2>
 
       <Conversation>
-        {feed
-          ? feed.map((message, index) => {
-              return (
-                <Message
-                  key={keyGenerator() + index}
-                  message={message}
-                  user={user}
-                />
-              );
-            })
-          : null}
+        {feed.length > 0 ? (
+          feed.map((message, index) => {
+            return (
+              <Message
+                key={keyGenerator() + index}
+                message={message}
+                user={user}
+              />
+            );
+          })
+        ) : (
+          <Spinner />
+        )}
         <div ref={messageRef}></div>
       </Conversation>
 
