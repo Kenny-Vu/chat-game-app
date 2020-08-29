@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import useInterval from "../../hooks/useInterval";
 import { Button } from "../../GlobalStyles";
-const SPEED = 0.6;
+const SPEED = 1;
 
 const Game = ({ socket, user, room }) => {
   const [left, setLeft] = useState(0);
@@ -18,13 +18,19 @@ const Game = ({ socket, user, room }) => {
   const mapRef = useRef(); //set, but unsused for now...
 
   useEffect(() => {
-    socket.emit("new-player", {
+    socket.emit("request-existing-players");
+    socket.on("populate-game-zone", ({ players }) => {
+      const playersArray = Object.values(players);
+      console.log(playersArray);
+      setGameState((prevGameState) => playersArray);
+    });
+    socket.emit("player-joins", {
       user,
       room,
       posX: left,
       posY: top,
     });
-    socket.on("position-player", ({ players }) => {
+    socket.on("new-player-joins", ({ players }) => {
       delete players[`${socket.id}`];
       console.log(players);
       const playersArray = Object.values(players);

@@ -74,10 +74,14 @@ io.on("connection", (socket) => {
 
   //GAME Signals
   //adding new player
-  socket.on("new-player", ({ user, room, posX, posY }) => {
+  socket.on("request-existing-players", () => {
+    const players = getAllPlayers();
+    socket.emit("populate-game-zone", { players });
+  });
+  socket.on("player-joins", ({ user, room, posX, posY }) => {
     addNewPlayer(socket.id, user, room, posX, posY);
     const players = getAllPlayers();
-    socket.to(room).emit("position-player", { players });
+    socket.to(room).emit("new-player-joins", { players });
   });
 
   socket.on("disconnect", () => {
