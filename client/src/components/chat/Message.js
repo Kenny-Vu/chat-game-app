@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import ReactEmoji from "react-emoji";
 
 const Message = ({ message, user }) => {
   const messageColor = (message, user) => {
@@ -26,7 +27,7 @@ const Message = ({ message, user }) => {
           background: messageColor(message, user),
         }}
       >
-        {message.text}
+        {ReactEmoji.emojify(message.text)}
       </Text>
     </MessageContainer>
   );

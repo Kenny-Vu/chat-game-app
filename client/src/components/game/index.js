@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import useInterval from "../../hooks/useInterval";
 import { Button } from "../../GlobalStyles";
-const SPEED = 1;
+const SPEED = 1.5;
 
 const Game = ({ socket, user, room }) => {
   const [left, setLeft] = useState(0);
