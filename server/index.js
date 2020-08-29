@@ -2,7 +2,15 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+  addNewPlayer,
+  updatePlayer,
+  getAllPlayers,
+} = require("./users");
 const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
 
 const socketio = require("socket.io");
@@ -52,6 +60,7 @@ io.on("connection", (socket) => {
       id: socket.id,
     });
   });
+
   socket.on("input-send", ({ input, id }) => {
     const user = getUser(id);
     //each socket automatically generates a random unique id
@@ -62,6 +71,15 @@ io.on("connection", (socket) => {
       .to(user.room)
       .emit("display-message", { text: input, id, user: user.user });
   });
+
+  //GAME Signals
+  //adding new player
+  socket.on("new-player", ({ user, room, posX, posY }) => {
+    addNewPlayer(socket.id, user, room, posX, posY);
+    const players = getAllPlayers();
+    socket.to(room).emit("position-player", { players });
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected..."); //notify server when user leaves
     //luckily, socket.id will always be the socket that is emitting the signal. In this case, the user that left

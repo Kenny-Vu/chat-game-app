@@ -1,4 +1,5 @@
 const users = {};
+const gameState = {};
 
 //retrieves user using username
 const getUserFromName = (userName) => {
@@ -37,10 +38,41 @@ const getUsersInRoom = (room) => {
   return allUsers.filter((user) => user.room === room);
 };
 
+//HELPERS FOR GAME SIDE
+//adding new players that log in
+const addNewPlayer = (id, user, room, posX, posY) => {
+  gameState[`${id}`] = {
+    id,
+    user,
+    room,
+    posX,
+    posY,
+  };
+  console.log(gameState);
+};
+
+const updatePlayer = (id, user, room, posX, posY) => {
+  gameState[`${id}`] = {
+    id,
+    user,
+    room,
+    posX,
+    posY,
+  };
+  console.log(gameState);
+};
+
+getAllPlayers = () => {
+  return gameState;
+};
+
 module.exports = {
   addUser,
   removeUser,
   getUser,
   getUsersInRoom,
   getUserFromName,
+  addNewPlayer,
+  updatePlayer,
+  getAllPlayers,
 };

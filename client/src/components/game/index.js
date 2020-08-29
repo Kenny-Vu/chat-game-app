@@ -5,16 +5,33 @@ import useInterval from "../../hooks/useInterval";
 import { Button } from "../../GlobalStyles";
 const SPEED = 0.6;
 
-const Game = ({ socket }) => {
-  const [left, setLeft] = useState(null);
-  const [top, setTop] = useState(null);
+const Game = ({ socket, user, room }) => {
+  const [left, setLeft] = useState(0);
+  const [top, setTop] = useState(0);
   const [keyPress, setKeyPress] = useState({});
+  const [gameState, setGameState] = useState([]);
 
   const history = useHistory();
 
   const playerRef = useRef();
   const gameZoneRef = useRef();
   const mapRef = useRef(); //set, but unsused for now...
+
+  useEffect(() => {
+    socket.emit("new-player", {
+      user,
+      room,
+      posX: left,
+      posY: top,
+    });
+    socket.on("position-player", ({ players }) => {
+      delete players[`${socket.id}`];
+      console.log(players);
+      const playersArray = Object.values(players);
+      setGameState((prevGameState) => playersArray);
+      console.log(playersArray);
+    });
+  }, []);
 
   //function checks if one of the control keys for movement has been pressed
   const handleKeyPress = (e) => {
@@ -51,7 +68,7 @@ const Game = ({ socket }) => {
       gameZone.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
-
+  //MAIN GAME LOOP
   useInterval(() => {
     if (keyPress.a) {
       if (left < -544) {
@@ -97,6 +114,16 @@ const Game = ({ socket }) => {
               top: `${top + 144 + 144 / 2}px`,
             }} //we have to alter the position of the character to center him in the Camera div
           />
+          {gameState &&
+            gameState.map((player, index) => (
+              <Sprite
+                key={`player-${index}`}
+                style={{
+                  left: `${player.posX + 256 * 2}px`,
+                  top: `${player.posY + 144 + 144 / 2}px`,
+                }} //we have to alter the position of the character to center him in the Camera div
+              />
+            ))}
         </Map>
       </Camera>
       <ActionBar>
