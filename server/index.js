@@ -10,6 +10,7 @@ const {
   addNewPlayer,
   updatePlayer,
   getAllPlayers,
+  removePlayer,
 } = require("./users");
 const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
 
@@ -43,7 +44,6 @@ io.on("connection", (socket) => {
     socket.join(room);
     //conecting to Mongo. Needs to be in async await for past messages to load first before the welcome message
     await getAllMessagesInRoom(room).then((result) => {
-      console.log(result);
       socket.emit("populate-feed", { messages: result });
     });
 
@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
   });
   socket.on("move-player", ({ user, room, posX, posY }) => {
     const players = getAllPlayers();
-    players[`${socket.id}`] = { user, room, posX, posY };
+    players[`${socket.id}`] = { id: socket.id, user, room, posX, posY };
     socket.to(room).emit("update-player-position", { players });
   });
 
@@ -90,6 +90,7 @@ io.on("connection", (socket) => {
       text: `${user.user} has left the chat room`,
     });
     removeUser(socket.id);
+    removePlayer(socket.id);
   });
 });
 

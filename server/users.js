@@ -15,19 +15,14 @@ const addUser = (id, user, room) => {
   //if user already exists we need to give him a new socket id and remove the old entry
   if (userExists) {
     delete users[`${userExists.id}`];
-    console.log("old user deleted!");
   }
-  console.log("user added!");
   users[`${id}`] = { id, user, room };
-  console.log(users);
 };
 //remove user from users
 const removeUser = (id) => {
-  console.log("removed user!");
   delete users[`${id}`];
-  console.log(users);
 };
-//get infos from a specific user
+//get infos for a specific user
 const getUser = (id) => {
   return users[`${id}`];
 };
@@ -41,6 +36,16 @@ const getUsersInRoom = (room) => {
 //HELPERS FOR GAME SIDE
 //adding new players that log in
 const addNewPlayer = (id, user, room, posX, posY) => {
+  console.log(gameState);
+  const players = Object.values(gameState);
+  const playerExists = players.find((player) => player.user === user);
+  console.log(playerExists);
+  //if user already exists we need to give him a new socket id and remove the old entry
+  if (playerExists) {
+    delete gameState[`${playerExists.id}`];
+    console.log(gameState[`${playerExists.id}`]);
+    console.log("old player deleted!");
+  }
   gameState[`${id}`] = {
     id,
     user,
@@ -66,6 +71,10 @@ getAllPlayers = () => {
   return gameState;
 };
 
+const removePlayer = (id) => {
+  delete gameState[`${id}`];
+};
+
 module.exports = {
   addUser,
   removeUser,
@@ -75,4 +84,5 @@ module.exports = {
   addNewPlayer,
   updatePlayer,
   getAllPlayers,
+  removePlayer,
 };
