@@ -8,8 +8,7 @@ const initialState = {
   posY: 0,
 };
 
-const directionReducer = (state = initialState, action) => {
-  console.log(action);
+const playerStateReducer = (state = initialState, action) => {
   const { user, room, posX, posY } = action;
   switch (action.type) {
     case "PLAYER_JOINS": {
@@ -35,4 +34,4 @@ const directionReducer = (state = initialState, action) => {
   }
 };
 
-export default directionReducer;
+export default playerStateReducer;

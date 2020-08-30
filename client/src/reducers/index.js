@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
-import directions from "./direction-reducer";
-import chatRooms from "./chatRoom-reducer";
+import playerStates from "./playerState-reducer";
+import gameStates from "./gameState-reducer";
+// import chatRooms from "./chatRoom-reducer";
 
-export default combineReducers({ directions, chatRooms });
+export default combineReducers({ playerStates, gameStates });

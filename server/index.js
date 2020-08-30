@@ -33,8 +33,7 @@ const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
-//<-------------->
-//CHAT SOCKET SIGNALS
+// ------------ CHAT SOCKET SIGNALS ---------
 io.on("connection", (socket) => {
   console.log("a user connected!"); // When the client connects The server is notified
   socket.on("user-joins", async ({ user, room }) => {
@@ -54,7 +53,6 @@ io.on("connection", (socket) => {
 
   socket.on("input-send", ({ input, id }) => {
     const user = getUser(id);
-    //each socket automatically generates a random unique id
     //Storing user message to Mongo
     storeMessageData({ text: input, user: user.user, room: user.room });
 
@@ -63,7 +61,7 @@ io.on("connection", (socket) => {
       .emit("display-message", { text: input, id, user: user.user });
   });
 
-  //GAME SOCKET SIGNALS
+  // ------ GAME SOCKET SIGNALS -------
   //adding new player
   socket.on("request-existing-players", ({ room }) => {
     //TODO - ONLY SEND PLAYERS IN THE SAME ROOM
