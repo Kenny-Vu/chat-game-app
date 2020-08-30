@@ -11,6 +11,9 @@ const Game = ({ socket, user, room }) => {
   const [keyPress, setKeyPress] = useState({});
   const [gameState, setGameState] = useState([]);
 
+  //call useSelector to make playerState available
+  // const playerState = useSelector((state) => state.playerState);
+
   const history = useHistory();
 
   const playerRef = useRef();
@@ -19,17 +22,20 @@ const Game = ({ socket, user, room }) => {
 
   useEffect(() => {
     socket.emit("request-existing-players");
+    //adds users sprites that are already in room
     socket.on("populate-game-zone", ({ players }) => {
       const playersArray = Object.values(players);
-      console.log(playersArray);
       setGameState((prevGameState) => playersArray);
+      //call dispatch to add player state to reducer with the socket id
     });
+    //main player
     socket.emit("player-joins", {
       user,
       room,
       posX: left,
       posY: top,
     });
+    // friend joins room
     socket.on("new-player-joins", ({ players }) => {
       delete players[`${socket.id}`];
       console.log(players);
@@ -37,6 +43,7 @@ const Game = ({ socket, user, room }) => {
       setGameState((prevGameState) => playersArray);
       console.log(playersArray);
     });
+    //update everyone's position except the main player
     socket.on("update-player-position", ({ players }) => {
       console.log("working...");
       delete players[`${socket.id}`];
@@ -135,7 +142,7 @@ const Game = ({ socket, user, room }) => {
           {gameState &&
             gameState.map((player, index) => (
               <Sprite
-                key={`player-${index}`}
+                key={`friend-${index}`}
                 style={{
                   left: `${player.posX + 256 * 2}px`,
                   top: `${player.posY + 144 + 144 / 2}px`,
