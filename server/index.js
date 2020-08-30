@@ -7,6 +7,7 @@ const {
   gameState,
   addNewPlayer,
   updatePlayer,
+  getPlayersInRoom,
   removePlayer,
 } = require("./gameState");
 const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
@@ -64,9 +65,10 @@ io.on("connection", (socket) => {
 
   //GAME SOCKET SIGNALS
   //adding new player
-  socket.on("request-existing-players", () => {
+  socket.on("request-existing-players", ({ room }) => {
     //TODO - ONLY SEND PLAYERS IN THE SAME ROOM
-    socket.emit("populate-game-zone", { players: gameState });
+    const playersInRoom = getPlayersInRoom(room);
+    socket.emit("populate-game-zone", { players: playersInRoom });
   });
   socket.on("player-joins", ({ user, room, posX, posY }) => {
     addNewPlayer(socket.id, user, room, posX, posY);

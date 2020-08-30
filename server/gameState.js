@@ -29,8 +29,8 @@ const updatePlayer = (id, user, room, posX, posY) => {
   };
 };
 
-getAllPlayers = () => {
-  return gameState;
+getPlayersInRoom = (room) => {
+  return Object.values(gameState).filter((player) => player.room === room);
 };
 
 const removePlayer = (id) => {
@@ -41,5 +41,6 @@ module.exports = {
   gameState,
   addNewPlayer,
   updatePlayer,
+  getPlayersInRoom,
   removePlayer,
 };

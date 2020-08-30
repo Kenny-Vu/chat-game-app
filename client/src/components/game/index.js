@@ -27,7 +27,7 @@ const Game = ({ socket, user, room }) => {
   const mapRef = useRef(); //set, but unsused for now...
 
   useEffect(() => {
-    socket.emit("request-existing-players");
+    socket.emit("request-existing-players", { room });
     //adds users sprites that are already in room
     socket.on("populate-game-zone", ({ players }) => {
       const playersArray = Object.values(players);
