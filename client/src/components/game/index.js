@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+
 import useInterval from "../../hooks/useInterval";
 import { Button } from "../../GlobalStyles";
-
-//TESTING REDUX
-import { useDispatch, useSelector } from "react-redux";
 import { playerJoins, playerMoves, updateGameState } from "../../actions";
 
 const SPEED = 1.5;
 
 const Game = ({ socket, user, room }) => {
   const [keyPress, setKeyPress] = useState({}); // useHook?
+  const [spriteY, setSpriteY] = useState(-16);
+
   //retrieving current X and Y position of our user's sprite
   const { posX, posY } = useSelector((state) => state.playerStates);
   const { activePlayers } = useSelector((state) => state.gameStates);
@@ -23,8 +24,6 @@ const Game = ({ socket, user, room }) => {
     socket.emit("request-existing-players", { room });
     //adds users sprites that are already in room excluding main player
     socket.on("populate-game-zone", ({ players }) => {
-      console.log(players);
-      const playersArray = Object.values(players);
       dispatch(updateGameState(players));
       //REDUX - ADDING NEW PLAYERSTATE
       dispatch(playerJoins({ id: socket.id, user, room, posX: 0, posY: 0 }));
@@ -50,6 +49,12 @@ const Game = ({ socket, user, room }) => {
       dispatch(updateGameState(playersArray));
     });
   }, []);
+  const handleLogOut = () => {
+    socket.disconnect();
+    socket.close();
+    sessionStorage.clear();
+    history.push("/");
+  };
 
   //function checks if one of the control keys for movement has been pressed
   const handleKeyPress = (e) => {
@@ -63,7 +68,6 @@ const Game = ({ socket, user, room }) => {
       setKeyPress((prevKeyPress) => ({ [e.key]: true }));
     }
   };
-  //function
   const handleKeyUp = (e) => {
     if (
       e.code === "KeyW" ||
@@ -90,6 +94,7 @@ const Game = ({ socket, user, room }) => {
   //MAIN GAME LOOP
   useInterval(() => {
     if (keyPress.a) {
+      setSpriteY(-400);
       if (posX < -544) {
         return;
       }
@@ -102,6 +107,7 @@ const Game = ({ socket, user, room }) => {
       });
     }
     if (keyPress.d) {
+      setSpriteY(-144);
       if (posX > 900) {
         return;
       }
@@ -114,6 +120,7 @@ const Game = ({ socket, user, room }) => {
       });
     }
     if (keyPress.w) {
+      setSpriteY(-272);
       if (posY < -216) {
         return;
       }
@@ -126,6 +133,7 @@ const Game = ({ socket, user, room }) => {
       });
     }
     if (keyPress.s) {
+      setSpriteY(-16);
       if (posY > 520) {
         return;
       }
@@ -138,43 +146,6 @@ const Game = ({ socket, user, room }) => {
       });
     }
   });
-  // useInterval(() => {
-  //   if (keyPress.a) {
-  //     if (left < -544) {
-  //       return;
-  //     }
-  //     setLeft((prevLeft) => prevLeft - SPEED);
-  //     socket.emit("move-player", { user, room, posX: left, posY: top });
-  //   }
-  //   if (keyPress.d) {
-  //     if (left > 900) {
-  //       return;
-  //     }
-  //     setLeft((prevLeft) => prevLeft + SPEED);
-  //     socket.emit("move-player", { user, room, posX: left, posY: top });
-  //   }
-  //   if (keyPress.w) {
-  //     if (top < -216) {
-  //       return;
-  //     }
-  //     setTop((prevTop) => prevTop - SPEED);
-  //     socket.emit("move-player", { user, room, posX: left, posY: top });
-  //   }
-  //   if (keyPress.s) {
-  //     if (top > 520) {
-  //       return;
-  //     }
-  //     setTop((prevTop) => prevTop + SPEED);
-  //     socket.emit("move-player", { user, room, posX: left, posY: top });
-  //   }
-  // });
-
-  const handleLogOut = () => {
-    socket.disconnect();
-    socket.close();
-    sessionStorage.clear();
-    history.push("/");
-  };
 
   return (
     <GameZone ref={gameZoneRef} tabIndex={0}>
@@ -189,6 +160,7 @@ const Game = ({ socket, user, room }) => {
             style={{
               left: `${posX + 256 * 2}px`,
               top: `${posY + 144 + 144 / 2}px`,
+              backgroundPosition: `-4px ${spriteY}px`,
             }} //we have to alter the position of the character to center him in the Camera div
           />
           {activePlayers &&
@@ -243,10 +215,10 @@ const Sprite = styled.div`
   background: url("assets/character.png");
   image-rendering: pixelated;
   background-size: 512px 512px;
-  background-position: -4px -16px;
   background-repeat: no-repeat;
   height: 128px;
   width: 128px;
+  border: solid;
 `;
 const ActionBar = styled.div`
   width: 80%;
