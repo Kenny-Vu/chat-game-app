@@ -1,17 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import useInterval from "../../hooks/useInterval";
-import { Button } from "../../GlobalStyles";
 import { playerJoins, playerMoves, updateGameState } from "../../actions";
+import LogOut from "./LogOut";
+
+//TESSSSTT
+import { useKeyPress } from "../../hooks/useKeyPress";
 
 const SPEED = 1.5;
+let delta = 0;
 
 const Game = ({ socket, user, room }) => {
-  const [keyPress, setKeyPress] = useState({}); // useHook?
   const [spriteY, setSpriteY] = useState(-16);
+  const [spriteX, setSpriteX] = useState(-4);
+  const { keyPress, handleKeyPress, handleKeyUp } = useKeyPress();
 
   //retrieving current X and Y position of our user's sprite
   const { posX, posY } = useSelector((state) => state.playerStates);
@@ -49,36 +54,6 @@ const Game = ({ socket, user, room }) => {
       dispatch(updateGameState(playersArray));
     });
   }, []);
-  const handleLogOut = () => {
-    socket.disconnect();
-    socket.close();
-    sessionStorage.clear();
-    history.push("/");
-  };
-
-  //function checks if one of the control keys for movement has been pressed
-  const handleKeyPress = (e) => {
-    if (
-      e.code === "KeyW" ||
-      e.code === "KeyA" ||
-      e.code === "KeyD" ||
-      e.code === "KeyS"
-    ) {
-      //We don't need to remember the other keys in state. Only the key that is true is needed to move our character
-      setKeyPress((prevKeyPress) => ({ [e.key]: true }));
-    }
-  };
-  const handleKeyUp = (e) => {
-    if (
-      e.code === "KeyW" ||
-      e.code === "KeyA" ||
-      e.code === "KeyD" ||
-      e.code === "KeyS"
-    ) {
-      //in this case we do need to remember the state of the other keys. Otherwise, keys that are still true will be removed.Making our character stop
-      setKeyPress((prevKeyPress) => ({ ...prevKeyPress, [e.key]: false }));
-    }
-  };
 
   useEffect(() => {
     const gameZone = gameZoneRef.current;
@@ -105,6 +80,11 @@ const Game = ({ socket, user, room }) => {
         posX: posX - SPEED,
         posY,
       });
+      delta++;
+      if (delta > 60) {
+        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
+        delta = 0;
+      }
     }
     if (keyPress.d) {
       setSpriteY(-144);
@@ -118,6 +98,11 @@ const Game = ({ socket, user, room }) => {
         posX: posX + SPEED,
         posY,
       });
+      delta++;
+      if (delta > 60) {
+        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
+        delta = 0;
+      }
     }
     if (keyPress.w) {
       setSpriteY(-272);
@@ -131,6 +116,11 @@ const Game = ({ socket, user, room }) => {
         posX,
         posY: posY - SPEED,
       });
+      delta++;
+      if (delta > 60) {
+        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
+        delta = 0;
+      }
     }
     if (keyPress.s) {
       setSpriteY(-16);
@@ -144,6 +134,11 @@ const Game = ({ socket, user, room }) => {
         posX,
         posY: posY + SPEED,
       });
+      delta++;
+      if (delta > 60) {
+        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
+        delta = 0;
+      }
     }
   });
 
@@ -160,7 +155,7 @@ const Game = ({ socket, user, room }) => {
             style={{
               left: `${posX + 256 * 2}px`,
               top: `${posY + 144 + 144 / 2}px`,
-              backgroundPosition: `-4px ${spriteY}px`,
+              backgroundPosition: `${spriteX}px ${spriteY}px`,
             }} //we have to alter the position of the character to center him in the Camera div
           />
           {activePlayers &&
@@ -176,7 +171,7 @@ const Game = ({ socket, user, room }) => {
         </Map>
       </Camera>
       <ActionBar>
-        <Button onClick={handleLogOut}>Logout</Button>
+        <LogOut socket={socket}>Logout</LogOut>
       </ActionBar>
     </GameZone>
   );
@@ -218,7 +213,7 @@ const Sprite = styled.div`
   background-repeat: no-repeat;
   height: 128px;
   width: 128px;
-  border: solid;
+  /* border: solid; */
 `;
 const ActionBar = styled.div`
   width: 80%;
