@@ -9,6 +9,7 @@ const initialState = {
 };
 
 const directionReducer = (state = initialState, action) => {
+  console.log(action);
   const { user, room, posX, posY } = action;
   switch (action.type) {
     case "PLAYER_JOINS": {

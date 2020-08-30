@@ -3,20 +3,26 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import useInterval from "../../hooks/useInterval";
 import { Button } from "../../GlobalStyles";
+
+//TESTING REDUX
+import { useDispatch, useSelector } from "react-redux";
+import { playerJoins, playerMoves } from "../../actions";
+
 const SPEED = 1.5;
 
 const Game = ({ socket, user, room }) => {
-  const [left, setLeft] = useState(0);
-  const [top, setTop] = useState(0);
-  const [keyPress, setKeyPress] = useState({});
-  const [gameState, setGameState] = useState([]);
+  // const [left, setLeft] = useState(0);
+  // const [top, setTop] = useState(0);
+  const [keyPress, setKeyPress] = useState({}); // useHook?
+  const [gameState, setGameState] = useState([]); //Redux
 
-  //call useSelector to make playerState available
-  // const playerState = useSelector((state) => state.playerState);
+  const dispatch = useDispatch();
+
+  //retrieving current X and Y position of our user's sprite
+  const { posX, posY } = useSelector((state) => state.directions);
 
   const history = useHistory();
 
-  const playerRef = useRef();
   const gameZoneRef = useRef();
   const mapRef = useRef(); //set, but unsused for now...
 
@@ -26,19 +32,19 @@ const Game = ({ socket, user, room }) => {
     socket.on("populate-game-zone", ({ players }) => {
       const playersArray = Object.values(players);
       setGameState((prevGameState) => playersArray);
-      //call dispatch to add player state to reducer with the socket id
+      //REDUX - ADDING NEW PLAYERSTATE
+      dispatch(playerJoins({ id: socket.id, user, room, posX: 0, posY: 0 }));
     });
     //main player
     socket.emit("player-joins", {
       user,
       room,
-      posX: left,
-      posY: top,
+      posX: 0,
+      posY: 0,
     });
-    // friend joins room
+    // friend joins room - add all members except main player
     socket.on("new-player-joins", ({ players }) => {
       delete players[`${socket.id}`];
-      console.log(players);
       const playersArray = Object.values(players);
       setGameState((prevGameState) => playersArray);
       console.log(playersArray);
@@ -49,7 +55,6 @@ const Game = ({ socket, user, room }) => {
       delete players[`${socket.id}`];
       const playersArray = Object.values(players);
       setGameState((prevGameState) => playersArray);
-      console.log(gameState);
     });
   }, []);
 
@@ -92,34 +97,88 @@ const Game = ({ socket, user, room }) => {
   //MAIN GAME LOOP
   useInterval(() => {
     if (keyPress.a) {
-      if (left < -544) {
+      if (posX < -544) {
         return;
       }
-      setLeft((prevLeft) => prevLeft - SPEED);
-      socket.emit("move-player", { user, room, posX: left, posY: top });
+      const newX = posX - 1;
+      dispatch(playerMoves({ posX: newX, posY }));
+      socket.emit("move-player", {
+        user,
+        room,
+        posX: newX,
+        posY,
+      });
     }
     if (keyPress.d) {
-      if (left > 900) {
+      if (posX > 900) {
         return;
       }
-      setLeft((prevLeft) => prevLeft + SPEED);
-      socket.emit("move-player", { user, room, posX: left, posY: top });
+      const newX = posX + 1;
+      dispatch(playerMoves({ posX: newX, posY: posY }));
+      socket.emit("move-player", {
+        user,
+        room,
+        posX: newX,
+        posY,
+      });
     }
     if (keyPress.w) {
-      if (top < -216) {
+      if (posY < -216) {
         return;
       }
-      setTop((prevTop) => prevTop - SPEED);
-      socket.emit("move-player", { user, room, posX: left, posY: top });
+      const newY = posY - SPEED;
+      dispatch(playerMoves({ posX, posY: newY }));
+      socket.emit("move-player", {
+        user,
+        room,
+        posX,
+        posY: newY,
+      });
     }
     if (keyPress.s) {
-      if (top > 520) {
+      if (posY > 520) {
         return;
       }
-      setTop((prevTop) => prevTop + SPEED);
-      socket.emit("move-player", { user, room, posX: left, posY: top });
+      const newY = posY + SPEED;
+      dispatch(playerMoves({ posX, posY: newY }));
+      socket.emit("move-player", {
+        user,
+        room,
+        posX,
+        posY: newY,
+      });
     }
   });
+  // useInterval(() => {
+  //   if (keyPress.a) {
+  //     if (left < -544) {
+  //       return;
+  //     }
+  //     setLeft((prevLeft) => prevLeft - SPEED);
+  //     socket.emit("move-player", { user, room, posX: left, posY: top });
+  //   }
+  //   if (keyPress.d) {
+  //     if (left > 900) {
+  //       return;
+  //     }
+  //     setLeft((prevLeft) => prevLeft + SPEED);
+  //     socket.emit("move-player", { user, room, posX: left, posY: top });
+  //   }
+  //   if (keyPress.w) {
+  //     if (top < -216) {
+  //       return;
+  //     }
+  //     setTop((prevTop) => prevTop - SPEED);
+  //     socket.emit("move-player", { user, room, posX: left, posY: top });
+  //   }
+  //   if (keyPress.s) {
+  //     if (top > 520) {
+  //       return;
+  //     }
+  //     setTop((prevTop) => prevTop + SPEED);
+  //     socket.emit("move-player", { user, room, posX: left, posY: top });
+  //   }
+  // });
 
   const handleLogOut = () => {
     socket.disconnect();
@@ -131,12 +190,17 @@ const Game = ({ socket, user, room }) => {
   return (
     <GameZone ref={gameZoneRef} tabIndex={0}>
       <Camera>
-        <Map ref={mapRef} style={{ left: `${-left}px`, top: `${-top}px` }}>
+        <Map
+          ref={mapRef}
+          style={{
+            left: `${-posX}px`,
+            top: `${-posY}px`,
+          }}
+        >
           <Sprite
-            ref={playerRef}
             style={{
-              left: `${left + 256 * 2}px`,
-              top: `${top + 144 + 144 / 2}px`,
+              left: `${posX + 256 * 2}px`,
+              top: `${posY + 144 + 144 / 2}px`,
             }} //we have to alter the position of the character to center him in the Camera div
           />
           {gameState &&

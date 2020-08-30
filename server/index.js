@@ -2,16 +2,13 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
+const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
 const {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
+  gameState,
   addNewPlayer,
   updatePlayer,
-  getAllPlayers,
   removePlayer,
-} = require("./users");
+} = require("./gameState");
 const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
 
 const socketio = require("socket.io");
@@ -68,18 +65,16 @@ io.on("connection", (socket) => {
   //GAME SOCKET SIGNALS
   //adding new player
   socket.on("request-existing-players", () => {
-    const players = getAllPlayers();
-    socket.emit("populate-game-zone", { players });
+    //TODO - ONLY SEND PLAYERS IN THE SAME ROOM
+    socket.emit("populate-game-zone", { players: gameState });
   });
   socket.on("player-joins", ({ user, room, posX, posY }) => {
     addNewPlayer(socket.id, user, room, posX, posY);
-    const players = getAllPlayers();
-    socket.to(room).emit("new-player-joins", { players });
+    socket.to(room).emit("new-player-joins", { players: gameState });
   });
   socket.on("move-player", ({ user, room, posX, posY }) => {
-    const players = getAllPlayers();
-    players[`${socket.id}`] = { id: socket.id, user, room, posX, posY };
-    socket.to(room).emit("update-player-position", { players });
+    gameState[`${socket.id}`] = { id: socket.id, user, room, posX, posY };
+    socket.to(room).emit("update-player-position", { players: gameState });
   });
 
   socket.on("disconnect", () => {
@@ -91,8 +86,7 @@ io.on("connection", (socket) => {
     });
     removeUser(socket.id);
     removePlayer(socket.id);
-    const players = getAllPlayers();
-    socket.to(room).emit("update-player-position", { players });
+    socket.to(room).emit("update-player-position", { players: gameState });
   });
 });
 
