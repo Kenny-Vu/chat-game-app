@@ -14,7 +14,7 @@ export const playerMoves = ({ posX, posY, spriteY }) => ({
   posY,
   spriteY,
 });
-export const playerLeaves = () => ({ type: "PLAYER_LEAVES" });
+export const playerWalks = () => ({ type: "PLAYER_WALKS" });
 
 //ACTIONS FOR GAMESTATE
 export const updateGameState = (players) => {

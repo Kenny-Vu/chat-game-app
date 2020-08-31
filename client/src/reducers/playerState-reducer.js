@@ -28,6 +28,13 @@ const playerStateReducer = (state = initialState, action) => {
         spriteY,
       };
     }
+    case "PLAYER_WALKS": {
+      const walkPos = state.spriteX > -388 ? state.spriteX - 128 : -4;
+      return {
+        ...state,
+        spriteX: walkPos,
+      };
+    }
     case "PLAYER_LEAVES": {
       return initialState;
     }

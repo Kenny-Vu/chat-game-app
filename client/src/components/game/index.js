@@ -4,7 +4,12 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import useInterval from "../../hooks/useInterval";
-import { playerJoins, playerMoves, updateGameState } from "../../actions";
+import {
+  playerJoins,
+  playerMoves,
+  playerWalks,
+  updateGameState,
+} from "../../actions";
 import LogOut from "./LogOut";
 
 //TESSSSTT
@@ -14,11 +19,12 @@ const SPEED = 1.5;
 let delta = 0;
 
 const Game = ({ socket, user, room }) => {
-  const [spriteX, setSpriteX] = useState(-4);
   const { keyPress, handleKeyPress, handleKeyUp } = useKeyPress();
 
   //retrieving current X and Y position of our user's sprite
-  const { posX, posY, spriteY } = useSelector((state) => state.playerStates);
+  const { posX, posY, spriteY, spriteX } = useSelector(
+    (state) => state.playerStates
+  );
   const { activePlayers } = useSelector((state) => state.gameStates);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -73,6 +79,11 @@ const Game = ({ socket, user, room }) => {
       if (posX < -544) {
         return;
       }
+      delta++;
+      if (delta > 60) {
+        dispatch(playerWalks());
+        delta = 0;
+      }
       dispatch(playerMoves({ posX: posX - SPEED, posY, spriteY: -400 }));
       socket.emit("move-player", {
         user,
@@ -80,16 +91,17 @@ const Game = ({ socket, user, room }) => {
         posX: posX - SPEED,
         posY,
         spriteY,
+        spriteX,
       });
-      delta++;
-      if (delta > 60) {
-        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
-        delta = 0;
-      }
     }
     if (keyPress.d) {
       if (posX > 900) {
         return;
+      }
+      delta++;
+      if (delta > 60) {
+        dispatch(playerWalks());
+        delta = 0;
       }
       dispatch(playerMoves({ posX: posX + SPEED, posY: posY, spriteY: -144 }));
       socket.emit("move-player", {
@@ -98,16 +110,17 @@ const Game = ({ socket, user, room }) => {
         posX: posX + SPEED,
         posY,
         spriteY,
+        spriteX,
       });
-      delta++;
-      if (delta > 60) {
-        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
-        delta = 0;
-      }
     }
     if (keyPress.w) {
       if (posY < -216) {
         return;
+      }
+      delta++;
+      if (delta > 60) {
+        dispatch(playerWalks());
+        delta = 0;
       }
       dispatch(playerMoves({ posX, posY: posY - SPEED, spriteY: -272 }));
       socket.emit("move-player", {
@@ -116,16 +129,17 @@ const Game = ({ socket, user, room }) => {
         posX,
         posY: posY - SPEED,
         spriteY,
+        spriteX,
       });
-      delta++;
-      if (delta > 60) {
-        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
-        delta = 0;
-      }
     }
     if (keyPress.s) {
       if (posY > 520) {
         return;
+      }
+      delta++;
+      if (delta > 60) {
+        dispatch(playerWalks());
+        delta = 0;
       }
       dispatch(playerMoves({ posX, posY: posY + SPEED, spriteY: -16 }));
       socket.emit("move-player", {
@@ -134,12 +148,8 @@ const Game = ({ socket, user, room }) => {
         posX,
         posY: posY + SPEED,
         spriteY,
+        spriteX,
       });
-      delta++;
-      if (delta > 60) {
-        setSpriteX((prev) => (prev > -388 ? prev - 128 : -4));
-        delta = 0;
-      }
     }
   });
 
@@ -166,7 +176,7 @@ const Game = ({ socket, user, room }) => {
                 style={{
                   left: `${player.posX + 256 * 2}px`,
                   top: `${player.posY + 144 + 144 / 2}px`,
-                  backgroundPosition: `-4px ${player.spriteY}px`,
+                  backgroundPosition: `${player.spriteX}px ${player.spriteY}px`,
                 }} //we have to alter the position of the character to center him in the Camera div
               />
             ))}

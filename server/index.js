@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
     addNewPlayer(socket.id, user, room, posX, posY, spriteY);
     socket.to(room).emit("new-player-joins", { players: gameState });
   });
-  socket.on("move-player", ({ user, room, posX, posY, spriteY }) => {
+  socket.on("move-player", ({ user, room, posX, posY, spriteY, spriteX }) => {
     gameState[`${socket.id}`] = {
       id: socket.id,
       user,
@@ -80,6 +80,7 @@ io.on("connection", (socket) => {
       posX,
       posY,
       spriteY,
+      spriteX,
     };
     socket.to(room).emit("update-player-position", { players: gameState });
   });
