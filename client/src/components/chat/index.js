@@ -8,10 +8,6 @@ import { keyGenerator } from "../../helpers";
 import Message from "./Message";
 import Spinner from "../Spinner";
 
-// const BASE_URL = "localhost:8000"; // specify the port of the server
-
-//IF USER AND ROOM EXISTS IN SESSIONSTORAGE THEN USE THAT RATHER THAN THE USER AND ROOM FROM REDUX/PROP
-
 const Chat = ({ socket, room, user }) => {
   const [input, setInput] = useState("");
   const [feed, setFeed] = useState([]);
@@ -141,14 +137,5 @@ const ChatInput = styled.textarea`
     border: #4287f5 solid;
   }
 `;
-// const Submit = styled.button`
-//   background: #4287f5;
-//   color: #fff;
-//   cursor: pointer;
-//   border: none;
-//   border-radius: 4px;
-//   padding: 0.5rem;
-//   font-size: 1rem;
-// `;
 
 export default Chat;

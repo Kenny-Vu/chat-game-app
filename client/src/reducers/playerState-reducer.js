@@ -6,7 +6,8 @@ const initialState = {
   room: null,
   posX: 0,
   posY: 0,
-  spriteY: -4,
+  spriteY: -16,
+  spriteX: -4,
 };
 
 const playerStateReducer = (state = initialState, action) => {

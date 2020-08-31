@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import useInterval from "../../hooks/useInterval";
@@ -26,7 +25,6 @@ const Game = ({ socket, user, room }) => {
   );
   const { activePlayers } = useSelector((state) => state.gameStates);
   const dispatch = useDispatch();
-  const history = useHistory();
   const gameZoneRef = useRef();
 
   useEffect(() => {
@@ -35,9 +33,7 @@ const Game = ({ socket, user, room }) => {
     socket.on("populate-game-zone", ({ players }) => {
       dispatch(updateGameState(players));
       //REDUX - ADDING NEW PLAYERSTATE HERE BECAUSE SOCKET.ID IS AVAILABLE
-      dispatch(
-        playerJoins({ id: socket.id, user, room, posX: 0, posY: 0, spriteY })
-      );
+      dispatch(playerJoins({ id: socket.id, user, room }));
     });
     //main player
     socket.emit("player-joins", {
@@ -46,6 +42,7 @@ const Game = ({ socket, user, room }) => {
       posX,
       posY,
       spriteY,
+      spriteX,
     });
     // friend joins room - add all members except main player
     socket.on("new-player-joins", ({ players }) => {
@@ -85,7 +82,6 @@ const Game = ({ socket, user, room }) => {
       }
       dispatch(playerMoves({ posX: posX - SPEED, posY, spriteY: -400 }));
       socket.emit("move-player", {
-        user,
         room,
         posX: posX - SPEED,
         posY,
@@ -166,6 +162,7 @@ const Game = ({ socket, user, room }) => {
               left: `${posX + 256 * 2}px`,
               top: `${posY + 144 + 144 / 2}px`,
               backgroundPosition: `${spriteX}px ${spriteY}px`,
+              zIndex: 2,
             }} //we have to alter the position of the character to center him in the Camera div
           />
           {activePlayers &&
@@ -176,6 +173,7 @@ const Game = ({ socket, user, room }) => {
                   left: `${player.posX + 256 * 2}px`,
                   top: `${player.posY + 144 + 144 / 2}px`,
                   backgroundPosition: `${player.spriteX}px ${player.spriteY}px`,
+                  zIndex: 1,
                 }} //we have to alter the position of the character to center him in the Camera div
               />
             ))}

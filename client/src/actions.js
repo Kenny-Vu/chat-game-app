@@ -1,11 +1,9 @@
 //ACTIONS FOR MAIN PLAYER
-export const playerJoins = ({ id, user, room, posX, posY }) => ({
+export const playerJoins = ({ id, user, room }) => ({
   type: "PLAYER_JOINS",
   id,
   user,
   room,
-  posX,
-  posY,
 });
 
 export const playerMoves = ({ posX, posY, spriteY }) => ({

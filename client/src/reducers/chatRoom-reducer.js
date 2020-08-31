@@ -1,3 +1,5 @@
+//NOT USED YET, BUT WILL BE NEEDED TO REFACTOR CODE IN CHAT COMPONENT
+
 const initialState = {
   user: null,
   room: null,

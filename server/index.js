@@ -68,15 +68,13 @@ io.on("connection", (socket) => {
     const playersInRoom = getPlayersInRoom(room);
     socket.emit("populate-game-zone", { players: playersInRoom });
   });
-  socket.on("player-joins", ({ user, room, posX, posY, spriteY }) => {
-    addNewPlayer(socket.id, user, room, posX, posY, spriteY);
+  socket.on("player-joins", ({ user, room, posX, posY, spriteY, spriteX }) => {
+    addNewPlayer(socket.id, user, room, posX, posY, spriteY, spriteX);
     socket.to(room).emit("new-player-joins", { players: gameState });
   });
-  socket.on("move-player", ({ user, room, posX, posY, spriteY, spriteX }) => {
+  socket.on("move-player", ({ room, posX, posY, spriteY, spriteX }) => {
     gameState[`${socket.id}`] = {
-      id: socket.id,
-      user,
-      room,
+      ...gameState[`${socket.id}`],
       posX,
       posY,
       spriteY,
