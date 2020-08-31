@@ -11,6 +11,7 @@ const initialState = {
 };
 
 const playerStateReducer = (state = initialState, action) => {
+  console.log(action);
   const { user, room, posX, posY, spriteY } = action;
   switch (action.type) {
     case "PLAYER_JOINS": {

@@ -19,3 +19,14 @@ export const Button = styled.button`
   padding: 0.5rem;
   font-size: 1rem;
 `;
+
+export const Sprite = styled.div`
+  position: absolute;
+  background: url("assets/character.png");
+  image-rendering: pixelated;
+  background-size: 512px 512px;
+  background-repeat: no-repeat;
+  height: 128px;
+  width: 128px;
+  /* border: solid; */
+`;

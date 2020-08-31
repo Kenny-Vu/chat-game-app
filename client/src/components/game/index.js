@@ -10,12 +10,11 @@ import {
   updateGameState,
 } from "../../actions";
 import LogOut from "./LogOut";
-
-//TESSSSTT
 import { useKeyPress } from "../../hooks/useKeyPress";
+import { Sprite } from "../../GlobalStyles";
 
-const SPEED = 1.5;
-let delta = 0;
+//TEST
+import Controller from "./Controller";
 
 const Game = ({ socket, user, room }) => {
   const { keyPress, handleKeyPress, handleKeyUp } = useKeyPress();
@@ -69,85 +68,6 @@ const Game = ({ socket, user, room }) => {
     };
   }, []);
 
-  //MAIN GAME LOOP
-  useInterval(() => {
-    if (keyPress.a) {
-      if (posX < -544) {
-        return;
-      }
-      delta++;
-      if (delta > 60) {
-        dispatch(playerWalks());
-        delta = 0;
-      }
-      dispatch(playerMoves({ posX: posX - SPEED, posY, spriteY: -400 }));
-      socket.emit("move-player", {
-        room,
-        posX: posX - SPEED,
-        posY,
-        spriteY,
-        spriteX,
-      });
-    }
-    if (keyPress.d) {
-      if (posX > 900) {
-        return;
-      }
-      delta++;
-      if (delta > 60) {
-        dispatch(playerWalks());
-        delta = 0;
-      }
-      dispatch(playerMoves({ posX: posX + SPEED, posY: posY, spriteY: -144 }));
-      socket.emit("move-player", {
-        user,
-        room,
-        posX: posX + SPEED,
-        posY,
-        spriteY,
-        spriteX,
-      });
-    }
-    if (keyPress.w) {
-      if (posY < -216) {
-        return;
-      }
-      delta++;
-      if (delta > 60) {
-        dispatch(playerWalks());
-        delta = 0;
-      }
-      dispatch(playerMoves({ posX, posY: posY - SPEED, spriteY: -272 }));
-      socket.emit("move-player", {
-        user,
-        room,
-        posX,
-        posY: posY - SPEED,
-        spriteY,
-        spriteX,
-      });
-    }
-    if (keyPress.s) {
-      if (posY > 520) {
-        return;
-      }
-      delta++;
-      if (delta > 60) {
-        dispatch(playerWalks());
-        delta = 0;
-      }
-      dispatch(playerMoves({ posX, posY: posY + SPEED, spriteY: -16 }));
-      socket.emit("move-player", {
-        user,
-        room,
-        posX,
-        posY: posY + SPEED,
-        spriteY,
-        spriteX,
-      });
-    }
-  });
-
   return (
     <GameZone ref={gameZoneRef} tabIndex={0}>
       <Camera>
@@ -157,13 +77,11 @@ const Game = ({ socket, user, room }) => {
             top: `${-posY}px`,
           }}
         >
-          <Sprite
-            style={{
-              left: `${posX + 256 * 2}px`,
-              top: `${posY + 144 + 144 / 2}px`,
-              backgroundPosition: `${spriteX}px ${spriteY}px`,
-              zIndex: 2,
-            }} //we have to alter the position of the character to center him in the Camera div
+          <Controller
+            socket={socket}
+            user={user}
+            room={room}
+            keyPress={keyPress}
           />
           {activePlayers &&
             activePlayers.map((player, index) => (
@@ -213,16 +131,6 @@ const Map = styled.div`
   background-repeat: no-repeat;
   box-shadow: 0 0 16px black;
   image-rendering: pixelated;
-`;
-const Sprite = styled.div`
-  position: absolute;
-  background: url("assets/character.png");
-  image-rendering: pixelated;
-  background-size: 512px 512px;
-  background-repeat: no-repeat;
-  height: 128px;
-  width: 128px;
-  /* border: solid; */
 `;
 const ActionBar = styled.div`
   width: 80%;
