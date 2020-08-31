@@ -2,16 +2,11 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
-import useInterval from "../../hooks/useInterval";
-import {
-  playerJoins,
-  playerMoves,
-  playerWalks,
-  updateGameState,
-} from "../../actions";
+import { playerJoins, updateGameState } from "../../actions";
 import LogOut from "./LogOut";
+import Like from "./Like";
 import { useKeyPress } from "../../hooks/useKeyPress";
-import { Sprite } from "../../GlobalStyles";
+import { Sprite, Button } from "../../GlobalStyles";
 
 //TEST
 import Controller from "./Controller";
@@ -99,6 +94,7 @@ const Game = ({ socket, user, room }) => {
       </Camera>
       <ActionBar>
         <LogOut socket={socket}>Logout</LogOut>
+        <Like>Like</Like>
       </ActionBar>
     </GameZone>
   );
@@ -133,6 +129,8 @@ const Map = styled.div`
   image-rendering: pixelated;
 `;
 const ActionBar = styled.div`
+  display: flex;
+  justify-content: space-between;
   width: 80%;
   border: solid;
   margin: 0.5rem;

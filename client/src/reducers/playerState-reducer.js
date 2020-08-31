@@ -8,10 +8,10 @@ const initialState = {
   posY: 0,
   spriteY: -16,
   spriteX: -4,
+  liked: null,
 };
 
 const playerStateReducer = (state = initialState, action) => {
-  console.log(action);
   const { user, room, posX, posY, spriteY } = action;
   switch (action.type) {
     case "PLAYER_JOINS": {
@@ -37,6 +37,19 @@ const playerStateReducer = (state = initialState, action) => {
         spriteX: walkPos,
       };
     }
+    case "PLAYER_LIKED": {
+      return {
+        ...state,
+        liked: "<3",
+      };
+    }
+    case "PLAYER_UNLIKED": {
+      return {
+        ...state,
+        liked: null,
+      };
+    }
+
     case "PLAYER_LEAVES": {
       return initialState;
     }
