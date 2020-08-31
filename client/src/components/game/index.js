@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -20,7 +20,6 @@ let delta = 0;
 
 const Game = ({ socket, user, room }) => {
   const { keyPress, handleKeyPress, handleKeyUp } = useKeyPress();
-
   //retrieving current X and Y position of our user's sprite
   const { posX, posY, spriteY, spriteX } = useSelector(
     (state) => state.playerStates

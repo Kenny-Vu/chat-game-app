@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
+import { Button } from "../GlobalStyles";
 //Need to pass userName and Room info to the Main component.
 
 const Home = () => {
   const [userName, setUserName] = useState("");
   const [userRoom, setUserRoom] = useState("");
   const [error, setError] = useState(null);
-  // const dispatch = useDispatch();
   const history = useHistory();
 
   // If user was already logged in then redirect him to chat/game room
@@ -21,10 +21,9 @@ const Home = () => {
     e.preventDefault();
     if (!userName || !userRoom) {
       setError("Some information is missing!");
-      return; //create a error message later on to let user know they must fill the form
+      return;
     }
-    // dispatch(userJoins({ user: userName, room: userRoom })); do not need redux at the moment
-    // instead we can store the use in session for browser refreshes
+    // instead we can store the use in session to deal with browser refreshes
     sessionStorage.setItem("userName", userName);
     sessionStorage.setItem("userRoom", userRoom);
     setUserName("");
@@ -79,15 +78,27 @@ const Wrapper = styled.div`
   align-items: center;
   background: black;
   color: white;
+  h1 {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+  }
+  form {
+    text-align: center;
+    box-shadow: 0 0 6px white;
+    padding: 0.5rem;
+  }
 `;
 
 const Input = styled.input`
   padding: 0.5rem;
   margin: 0.5rem;
+  width: 300px;
+  font-size: 1.25rem;
 `;
 
-const Submit = styled.button`
-  margin: 0 auto;
+const Submit = styled(Button)`
+  margin: 2rem 0;
+  padding: 1rem;
+  font-size: 1.25rem;
 `;
-
 export default Home;
