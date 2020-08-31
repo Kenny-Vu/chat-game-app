@@ -6,10 +6,11 @@ const initialState = {
   room: null,
   posX: 0,
   posY: 0,
+  spriteY: -4,
 };
 
 const playerStateReducer = (state = initialState, action) => {
-  const { user, room, posX, posY } = action;
+  const { user, room, posX, posY, spriteY } = action;
   switch (action.type) {
     case "PLAYER_JOINS": {
       return {
@@ -24,6 +25,7 @@ const playerStateReducer = (state = initialState, action) => {
         ...state,
         posX,
         posY,
+        spriteY,
       };
     }
     case "PLAYER_LEAVES": {

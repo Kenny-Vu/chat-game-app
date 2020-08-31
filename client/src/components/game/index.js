@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 import useInterval from "../../hooks/useInterval";
 import { playerJoins, playerMoves, updateGameState } from "../../actions";
@@ -14,12 +14,11 @@ const SPEED = 1.5;
 let delta = 0;
 
 const Game = ({ socket, user, room }) => {
-  const [spriteY, setSpriteY] = useState(-16);
   const [spriteX, setSpriteX] = useState(-4);
   const { keyPress, handleKeyPress, handleKeyUp } = useKeyPress();
 
   //retrieving current X and Y position of our user's sprite
-  const { posX, posY } = useSelector((state) => state.playerStates);
+  const { posX, posY, spriteY } = useSelector((state) => state.playerStates);
   const { activePlayers } = useSelector((state) => state.gameStates);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -30,15 +29,18 @@ const Game = ({ socket, user, room }) => {
     //adds users sprites that are already in room excluding main player
     socket.on("populate-game-zone", ({ players }) => {
       dispatch(updateGameState(players));
-      //REDUX - ADDING NEW PLAYERSTATE
-      dispatch(playerJoins({ id: socket.id, user, room, posX: 0, posY: 0 }));
+      //REDUX - ADDING NEW PLAYERSTATE HERE BECAUSE SOCKET.ID IS AVAILABLE
+      dispatch(
+        playerJoins({ id: socket.id, user, room, posX: 0, posY: 0, spriteY })
+      );
     });
     //main player
     socket.emit("player-joins", {
       user,
       room,
-      posX: 0,
-      posY: 0,
+      posX,
+      posY,
+      spriteY,
     });
     // friend joins room - add all members except main player
     socket.on("new-player-joins", ({ players }) => {
@@ -48,7 +50,6 @@ const Game = ({ socket, user, room }) => {
     });
     //update everyone's position except the main player
     socket.on("update-player-position", ({ players }) => {
-      console.log("working...");
       delete players[`${socket.id}`];
       const playersArray = Object.values(players);
       dispatch(updateGameState(playersArray));
@@ -69,16 +70,16 @@ const Game = ({ socket, user, room }) => {
   //MAIN GAME LOOP
   useInterval(() => {
     if (keyPress.a) {
-      setSpriteY(-400);
       if (posX < -544) {
         return;
       }
-      dispatch(playerMoves({ posX: posX - SPEED, posY }));
+      dispatch(playerMoves({ posX: posX - SPEED, posY, spriteY: -400 }));
       socket.emit("move-player", {
         user,
         room,
         posX: posX - SPEED,
         posY,
+        spriteY,
       });
       delta++;
       if (delta > 60) {
@@ -87,16 +88,16 @@ const Game = ({ socket, user, room }) => {
       }
     }
     if (keyPress.d) {
-      setSpriteY(-144);
       if (posX > 900) {
         return;
       }
-      dispatch(playerMoves({ posX: posX + SPEED, posY: posY }));
+      dispatch(playerMoves({ posX: posX + SPEED, posY: posY, spriteY: -144 }));
       socket.emit("move-player", {
         user,
         room,
         posX: posX + SPEED,
         posY,
+        spriteY,
       });
       delta++;
       if (delta > 60) {
@@ -105,16 +106,16 @@ const Game = ({ socket, user, room }) => {
       }
     }
     if (keyPress.w) {
-      setSpriteY(-272);
       if (posY < -216) {
         return;
       }
-      dispatch(playerMoves({ posX, posY: posY - SPEED }));
+      dispatch(playerMoves({ posX, posY: posY - SPEED, spriteY: -272 }));
       socket.emit("move-player", {
         user,
         room,
         posX,
         posY: posY - SPEED,
+        spriteY,
       });
       delta++;
       if (delta > 60) {
@@ -123,16 +124,16 @@ const Game = ({ socket, user, room }) => {
       }
     }
     if (keyPress.s) {
-      setSpriteY(-16);
       if (posY > 520) {
         return;
       }
-      dispatch(playerMoves({ posX, posY: posY + SPEED }));
+      dispatch(playerMoves({ posX, posY: posY + SPEED, spriteY: -16 }));
       socket.emit("move-player", {
         user,
         room,
         posX,
         posY: posY + SPEED,
+        spriteY,
       });
       delta++;
       if (delta > 60) {
@@ -165,6 +166,7 @@ const Game = ({ socket, user, room }) => {
                 style={{
                   left: `${player.posX + 256 * 2}px`,
                   top: `${player.posY + 144 + 144 / 2}px`,
+                  backgroundPosition: `-4px ${player.spriteY}px`,
                 }} //we have to alter the position of the character to center him in the Camera div
               />
             ))}

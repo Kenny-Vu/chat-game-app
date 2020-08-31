@@ -8,10 +8,11 @@ export const playerJoins = ({ id, user, room, posX, posY }) => ({
   posY,
 });
 
-export const playerMoves = ({ posX, posY }) => ({
+export const playerMoves = ({ posX, posY, spriteY }) => ({
   type: "PLAYER_MOVES",
   posX,
   posY,
+  spriteY,
 });
 export const playerLeaves = () => ({ type: "PLAYER_LEAVES" });
 
