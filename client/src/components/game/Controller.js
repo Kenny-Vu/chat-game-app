@@ -6,6 +6,7 @@ import ReactEmoji from "react-emoji";
 import { Sprite } from "../../GlobalStyles";
 import useInterval from "../../hooks/useInterval";
 import { playerMoves, playerWalks } from "../../actions";
+import Bubble from "./Bubble";
 
 const SPEED = 1.5; //player's movement speed
 let delta = 0; //time difference used for walking animation
@@ -19,7 +20,6 @@ const Controller = ({ socket, user, room, keyPress }) => {
   //MAIN GAME LOOP
   useInterval(() => {
     if (keyPress.a) {
-      console.log(keyPress);
       if (posX < -544) {
         return;
       }
@@ -98,19 +98,7 @@ const Controller = ({ socket, user, room, keyPress }) => {
 
   return (
     <>
-      {liked && (
-        <Bubble
-          style={{
-            left: `${posX + 256 * 2}px`,
-            top: `${posY - 64 + 144 + 144 / 2}px`,
-            backgroundPosition: `${spriteX}px ${spriteY}px`,
-            zIndex: 3,
-          }}
-        >
-          ❤️
-        </Bubble>
-      )}
-
+      {liked && <Bubble posX={posX} posY={posY} />}
       <Player
         style={{
           left: `${posX + 256 * 2}px`,
@@ -125,17 +113,25 @@ const Controller = ({ socket, user, room, keyPress }) => {
 
 const Player = styled(Sprite)``;
 
-const Bubble = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  font-size: 2rem;
-`;
+// const Bubble = styled.div`
+//   position: absolute;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 0.5rem;
+//   width: 90px;
+//   height: 73px;
+//   border-radius: 50%;
+//   overflow: visible;
+//   span {
+//     font-size: 2rem;
+//   }
+//   img {
+//     position: absolute;
+//     width: 100px;
+//     height: 100px;
+//     border-radius: 20%;
+//   }
+// `;
 
 export default Controller;

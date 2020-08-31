@@ -8,7 +8,7 @@ import { playerLiked, playerUnLiked } from "../../actions";
 
 let delta = 0;
 
-const Like = () => {
+const Like = ({ socket, room }) => {
   const [liked, SetLiked] = useState(false);
 
   const dispatch = useDispatch();
@@ -20,11 +20,13 @@ const Like = () => {
   useInterval(() => {
     if (liked) {
       dispatch(playerLiked());
+      socket.emit("player-liked", { liked: true, room });
       delta++;
-      if (delta > 2000) {
+      if (delta > 750) {
         delta = 0;
         SetLiked(false);
         dispatch(playerUnLiked());
+        socket.emit("player-unLiked", { liked: false, room });
       }
     }
   });

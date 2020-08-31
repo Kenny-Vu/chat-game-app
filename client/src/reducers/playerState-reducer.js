@@ -40,7 +40,7 @@ const playerStateReducer = (state = initialState, action) => {
     case "PLAYER_LIKED": {
       return {
         ...state,
-        liked: "<3",
+        liked: true,
       };
     }
     case "PLAYER_UNLIKED": {

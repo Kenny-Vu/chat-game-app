@@ -6,7 +6,8 @@ import { playerJoins, updateGameState } from "../../actions";
 import LogOut from "./LogOut";
 import Like from "./Like";
 import { useKeyPress } from "../../hooks/useKeyPress";
-import { Sprite, Button } from "../../GlobalStyles";
+import { Sprite } from "../../GlobalStyles";
+import Bubble from "./Bubble";
 
 //TEST
 import Controller from "./Controller";
@@ -80,21 +81,28 @@ const Game = ({ socket, user, room }) => {
           />
           {activePlayers &&
             activePlayers.map((player, index) => (
-              <Sprite
-                key={`friend-${index}`}
-                style={{
-                  left: `${player.posX + 256 * 2}px`,
-                  top: `${player.posY + 144 + 144 / 2}px`,
-                  backgroundPosition: `${player.spriteX}px ${player.spriteY}px`,
-                  zIndex: 1,
-                }} //we have to alter the position of the character to center him in the Camera div
-              />
+              <>
+                {player.liked && (
+                  <Bubble friendX={player.posX} friendY={player.posY} />
+                )}
+                <Sprite
+                  key={`friend-${index}`}
+                  style={{
+                    left: `${player.posX + 256 * 2}px`,
+                    top: `${player.posY + 144 + 144 / 2}px`,
+                    backgroundPosition: `${player.spriteX}px ${player.spriteY}px`,
+                    zIndex: 1,
+                  }} //we have to alter the position of the character to center him in the Camera div
+                />
+              </>
             ))}
         </Map>
       </Camera>
       <ActionBar>
         <LogOut socket={socket}>Logout</LogOut>
-        <Like>Like</Like>
+        <Like socket={socket} room={room}>
+          Like
+        </Like>
       </ActionBar>
     </GameZone>
   );
