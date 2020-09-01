@@ -9,6 +9,7 @@ const initialState = {
   spriteY: -16,
   spriteX: -4,
   liked: null,
+  interaction: false,
 };
 
 const playerStateReducer = (state = initialState, action) => {
@@ -49,6 +50,18 @@ const playerStateReducer = (state = initialState, action) => {
       return {
         ...state,
         liked: null,
+      };
+    }
+    case "PLAYER_INTERACTS": {
+      return {
+        ...state,
+        interaction: true,
+      };
+    }
+    case "PLAYER_STOPS_INTERACTION": {
+      return {
+        ...state,
+        interaction: false,
       };
     }
 

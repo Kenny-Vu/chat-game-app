@@ -1,25 +1,44 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import ReactEmoji from "react-emoji";
 
 import { Sprite } from "../../GlobalStyles";
 import useInterval from "../../hooks/useInterval";
-import { playerMoves, playerWalks } from "../../actions";
+import {
+  playerMoves,
+  playerWalks,
+  playerInteracts,
+  playerStopsInteraction,
+} from "../../actions";
 import Bubble from "./Bubble";
 
 const SPEED = 1.5; //player's movement speed
 let delta = 0; //time difference used for walking animation
 
-const Controller = ({ socket, user, room, keyPress }) => {
-  const { posX, posY, spriteY, spriteX, liked } = useSelector(
+const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
+  const { posX, posY, spriteY, spriteX, liked, interaction } = useSelector(
     (state) => state.playerStates
   );
   const dispatch = useDispatch();
 
   //MAIN GAME LOOP
   useInterval(() => {
-    if (keyPress.a) {
+    //interaction key
+    if (keyPress.Space) {
+      //if player is in an interactive
+      if (posX < -450 && posY < -150) {
+        dispatch(playerInteracts());
+      }
+    }
+    if (interaction) {
+      delta++;
+      if (delta > 1000) {
+        dispatch(playerStopsInteraction());
+        delta = 0;
+      }
+    }
+    //Mouvement keys
+    if (keyPress.KeyA) {
       if (posX < -544) {
         return;
       }
@@ -28,7 +47,7 @@ const Controller = ({ socket, user, room, keyPress }) => {
         return;
       }
       //collision with bar right side
-      if (posX < 580 && posY < -175) {
+      if (posX < 580 && posX > -250 && posY < -175) {
         return;
       }
       delta++;
@@ -45,12 +64,12 @@ const Controller = ({ socket, user, room, keyPress }) => {
         spriteX,
       });
     }
-    if (keyPress.d) {
+    if (keyPress.KeyD) {
       if (posX > 900) {
         return;
       }
-      //collision with bar right side
-      if (posX < -180 && posY < -175) {
+      //collision with bar left side
+      if (posX < 580 && posX > -250 && posY < -175) {
         return;
       }
       delta++;
@@ -68,7 +87,7 @@ const Controller = ({ socket, user, room, keyPress }) => {
         spriteX,
       });
     }
-    if (keyPress.w) {
+    if (keyPress.KeyW) {
       if (posY < -244) {
         return;
       }
@@ -77,7 +96,7 @@ const Controller = ({ socket, user, room, keyPress }) => {
         return;
       }
       //collision with bar bottom
-      if (posX < 580 && posX > -180 && posY < -170) {
+      if (posX < 580 && posX > -250 && posY < -175) {
         return;
       }
       delta++;
@@ -95,7 +114,7 @@ const Controller = ({ socket, user, room, keyPress }) => {
         spriteX,
       });
     }
-    if (keyPress.s) {
+    if (keyPress.KeyS) {
       if (posY > 520) {
         return;
       }

@@ -8,10 +8,11 @@ export const useKeyPress = () => {
       e.code === "KeyW" ||
       e.code === "KeyA" ||
       e.code === "KeyD" ||
-      e.code === "KeyS"
+      e.code === "KeyS" ||
+      e.code === "Space"
     ) {
       //We don't need to remember the other keys in state. Only the key that is true is needed to move our character
-      setKeyPress((prevKeyPress) => ({ [e.key]: true }));
+      setKeyPress((prevKeyPress) => ({ ...prevKeyPress, [e.code]: true }));
     }
   };
   const handleKeyUp = (e) => {
@@ -19,10 +20,11 @@ export const useKeyPress = () => {
       e.code === "KeyW" ||
       e.code === "KeyA" ||
       e.code === "KeyD" ||
-      e.code === "KeyS"
+      e.code === "KeyS" ||
+      e.code === "Space"
     ) {
       //in this case we do need to remember the state of the other keys. Otherwise, keys that are still true will be removed.Making our character stop
-      setKeyPress((prevKeyPress) => ({ ...prevKeyPress, [e.key]: false }));
+      setKeyPress((prevKeyPress) => ({ ...prevKeyPress, [e.code]: false }));
     }
   };
   return { keyPress, handleKeyPress, handleKeyUp };

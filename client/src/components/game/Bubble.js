@@ -17,7 +17,7 @@ const Bubble = ({ posX, posY, friendX, friendY }) => {
   );
 };
 
-const MsgBubble = styled.div`
+export const MsgBubble = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
