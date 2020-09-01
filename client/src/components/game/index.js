@@ -6,7 +6,7 @@ import { playerJoins, updateGameState } from "../../actions";
 import LogOut from "./LogOut";
 import Like from "./Like";
 import { useKeyPress } from "../../hooks/useKeyPress";
-import { Sprite } from "../../GlobalStyles";
+import { Sprite, Button } from "../../GlobalStyles";
 import Bubble from "./Bubble";
 import Npc from "./Npc";
 
@@ -21,7 +21,8 @@ const Game = ({ socket, user, room }) => {
   );
   const { activePlayers } = useSelector((state) => state.gameStates);
   const dispatch = useDispatch();
-  const gameZoneRef = useRef();
+  const gameZoneRef = useRef(null);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     socket.emit("request-existing-players", { room });
@@ -53,6 +54,10 @@ const Game = ({ socket, user, room }) => {
       dispatch(updateGameState(playersArray));
     });
   }, []);
+
+  const handleMusic = () => {
+    audioRef.current.play();
+  };
 
   useEffect(() => {
     const gameZone = gameZoneRef.current;
@@ -104,6 +109,10 @@ const Game = ({ socket, user, room }) => {
         <Like socket={socket} room={room}>
           Like
         </Like>
+        <div>
+          <audio ref={audioRef} src="assets/Abstraction-Candy.wav" />
+          <Music onClick={handleMusic}>Music!🎵</Music>
+        </div>
         <LogOut socket={socket}>Logout</LogOut>
       </ActionBar>
     </GameZone>
@@ -144,8 +153,12 @@ const ActionBar = styled.div`
   width: 80%;
   border: solid;
   margin: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   background: white;
+`;
+
+const Music = styled(Button)`
+  background: #53d769;
 `;
 
 export default Game;
