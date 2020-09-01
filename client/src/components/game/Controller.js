@@ -47,7 +47,8 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
         return;
       }
       //collision with bar right side
-      if (posX < 580 && posX > -250 && posY < -175) {
+      // ONLY CHANGE 2ND AND 3RD CONDITION IF NEED TO FIX COLLISION BUG
+      if (posX < 580 && posX > -100 && posY < -200) {
         return;
       }
       delta++;
@@ -69,7 +70,7 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
         return;
       }
       //collision with bar left side
-      if (posX < 580 && posX > -250 && posY < -175) {
+      if (posX < 400 && posX > -230 && posY < -200) {
         return;
       }
       delta++;
@@ -96,7 +97,7 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
         return;
       }
       //collision with bar bottom
-      if (posX < 580 && posX > -250 && posY < -175) {
+      if (posX < 575 && posX > -225 && posY < -190) {
         return;
       }
       delta++;
