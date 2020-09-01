@@ -8,6 +8,7 @@ import Like from "./Like";
 import { useKeyPress } from "../../hooks/useKeyPress";
 import { Sprite } from "../../GlobalStyles";
 import Bubble from "./Bubble";
+import Npc from "./Npc";
 
 //TEST
 import Controller from "./Controller";
@@ -96,13 +97,14 @@ const Game = ({ socket, user, room }) => {
                 />
               </>
             ))}
+          <Npc></Npc>
         </Map>
       </Camera>
       <ActionBar>
-        <LogOut socket={socket}>Logout</LogOut>
         <Like socket={socket} room={room}>
           Like
         </Like>
+        <LogOut socket={socket}>Logout</LogOut>
       </ActionBar>
     </GameZone>
   );

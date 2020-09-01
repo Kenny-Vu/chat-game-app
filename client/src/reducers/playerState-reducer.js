@@ -31,7 +31,9 @@ const playerStateReducer = (state = initialState, action) => {
       };
     }
     case "PLAYER_WALKS": {
-      const walkPos = state.spriteX > -388 ? state.spriteX - 128 : -4;
+      const lastSpritePosition = -388;
+      const walkPos =
+        state.spriteX > lastSpritePosition ? state.spriteX - 128 : -4;
       return {
         ...state,
         spriteX: walkPos,

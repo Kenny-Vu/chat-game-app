@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
+//Used to render either a friend's message bubble or the current user's
 const Bubble = ({ posX, posY, friendX, friendY }) => {
   return (
     <MsgBubble

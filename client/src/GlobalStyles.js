@@ -20,6 +20,7 @@ export const Button = styled.button`
   font-size: 1rem;
 `;
 
+//characters
 export const Sprite = styled.div`
   position: absolute;
   background: url("assets/character.png");

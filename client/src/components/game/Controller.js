@@ -23,6 +23,14 @@ const Controller = ({ socket, user, room, keyPress }) => {
       if (posX < -544) {
         return;
       }
+      //collision with undertale sprite right side
+      if (posX < -475 && posY < -175) {
+        return;
+      }
+      //collision with bar right side
+      if (posX < 580 && posY < -175) {
+        return;
+      }
       delta++;
       if (delta > 60) {
         dispatch(playerWalks());
@@ -41,6 +49,10 @@ const Controller = ({ socket, user, room, keyPress }) => {
       if (posX > 900) {
         return;
       }
+      //collision with bar right side
+      if (posX < -180 && posY < -175) {
+        return;
+      }
       delta++;
       if (delta > 60) {
         dispatch(playerWalks());
@@ -57,7 +69,15 @@ const Controller = ({ socket, user, room, keyPress }) => {
       });
     }
     if (keyPress.w) {
-      if (posY < -216) {
+      if (posY < -244) {
+        return;
+      }
+      //collision with undertale sprite bottom
+      if (posX < -480 && posY < -170) {
+        return;
+      }
+      //collision with bar bottom
+      if (posX < 580 && posX > -180 && posY < -170) {
         return;
       }
       delta++;
@@ -112,26 +132,5 @@ const Controller = ({ socket, user, room, keyPress }) => {
 };
 
 const Player = styled(Sprite)``;
-
-// const Bubble = styled.div`
-//   position: absolute;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 0.5rem;
-//   width: 90px;
-//   height: 73px;
-//   border-radius: 50%;
-//   overflow: visible;
-//   span {
-//     font-size: 2rem;
-//   }
-//   img {
-//     position: absolute;
-//     width: 100px;
-//     height: 100px;
-//     border-radius: 20%;
-//   }
-// `;
 
 export default Controller;
