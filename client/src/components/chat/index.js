@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-// import io from "socket.io-client";
 import styled from "styled-components";
 import { Button } from "../../GlobalStyles";
 
@@ -12,18 +11,18 @@ import Spinner from "../Spinner";
 const Chat = ({ socket, room, user }) => {
   const [input, setInput] = useState("");
   const [feed, setFeed] = useState([]);
-  const [activePlayersObj, setActivePlayersObj] = useState({});
+  // const [activePlayersObj, setActivePlayersObj] = useState({});
   const messageRef = useRef(null); //ref used for autoscrolling
 
-  const { activePlayers } = useSelector((state) => state.gameStates);
-  const { posX, posY } = useSelector((state) => state.playerStates);
+  // const { activePlayers } = useSelector((state) => state.gameStates);
+  // const { posX, posY } = useSelector((state) => state.playerStates);
 
-  useEffect(() => {
-    activePlayers &&
-      activePlayers.forEach((player) => {
-        setActivePlayersObj((prev) => ({ [`${player.id}`]: player }));
-      });
-  }, [feed]);
+  // useEffect(() => {
+  //   activePlayers &&
+  //     activePlayers.forEach((player) => {
+  //       setActivePlayersObj((prev) => ({ [`${player.id}`]: player }));
+  //     });
+  // }, [feed]);
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
@@ -83,23 +82,24 @@ const Chat = ({ socket, room, user }) => {
       <Conversation>
         {feed.length > 0 ? (
           feed.map((message, index) => {
-            if (
-              activePlayersObj[`${message.id}`] &&
-              (activePlayersObj[`${message.id}`].posX > posX + 200 ||
-                activePlayersObj[`${message.id}`].posX < posX - 200 ||
-                activePlayersObj[`${message.id}`].posY > posY + 200 ||
-                activePlayersObj[`${message.id}`].posY < posY - 200)
-            ) {
-              return;
-            } else {
-              return (
-                <Message
-                  key={keyGenerator() + index}
-                  message={message}
-                  user={user}
-                />
-              );
-            }
+            // THIS USES CALCULATES IF THE PLAYER IS INSIDE ANOTHER PLAYER'S ZONE, BUT TAKES TOO MUCH PROCESSING POWER AND CAUSES LAGS WHEN THERE'S TOO MANY MESSAGES
+            // if (
+            //   activePlayersObj[`${message.id}`] &&
+            //   (activePlayersObj[`${message.id}`].posX > posX + 200 ||
+            //     activePlayersObj[`${message.id}`].posX < posX - 200 ||
+            //     activePlayersObj[`${message.id}`].posY > posY + 200 ||
+            //     activePlayersObj[`${message.id}`].posY < posY - 200)
+            // ) {
+            //   return;
+            // } else {
+            return (
+              <Message
+                key={keyGenerator() + index}
+                message={message}
+                user={user}
+              />
+            );
+            // }
           })
         ) : (
           <Spinner />
