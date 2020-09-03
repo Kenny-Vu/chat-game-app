@@ -11,18 +11,17 @@ import Spinner from "../Spinner";
 const Chat = ({ socket, room, user }) => {
   const [input, setInput] = useState("");
   const [feed, setFeed] = useState([]);
-  // const [activePlayersObj, setActivePlayersObj] = useState({});
   const messageRef = useRef(null); //ref used for autoscrolling
 
   // const { activePlayers } = useSelector((state) => state.gameStates);
   // const { posX, posY } = useSelector((state) => state.playerStates);
 
-  // useEffect(() => {
-  //   activePlayers &&
-  //     activePlayers.forEach((player) => {
-  //       setActivePlayersObj((prev) => ({ [`${player.id}`]: player }));
-  //     });
-  // }, [feed]);
+  // let activePlayersObj = {};
+  // if (activePlayers) {
+  //   activePlayers.forEach((player) => {
+  //     activePlayersObj[`${player.id}`] = player;
+  //   });
+  // }
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {

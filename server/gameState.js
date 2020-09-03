@@ -34,7 +34,14 @@ const updatePlayer = (id, user, room, posX, posY, spriteY, spriteX) => {
 };
 
 getPlayersInRoom = (room) => {
-  return Object.values(gameState).filter((player) => player.room === room);
+  // const playerObj = {};
+  const playersArr = Object.values(gameState).filter(
+    (player) => player.room === room
+  );
+  // playersArr.forEach((player) => {
+  //   playerObj[`${player.id}`] = player;
+  // });
+  return playersArr;
 };
 
 const removePlayer = (id) => {

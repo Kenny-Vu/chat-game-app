@@ -1,35 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import { Button } from "../../GlobalStyles";
-import useInterval from "../../hooks/useInterval";
-import { playerLiked, playerUnLiked } from "../../actions";
-
-let delta = 0;
+import { playerLiked } from "../../actions";
 
 const Like = ({ socket, room }) => {
-  const [liked, SetLiked] = useState(false);
-
   const dispatch = useDispatch();
 
   const handleLike = () => {
-    SetLiked(true);
+    dispatch(playerLiked());
   };
-
-  useInterval(() => {
-    if (liked) {
-      dispatch(playerLiked());
-      socket.emit("player-liked", { liked: true, room });
-      delta++;
-      if (delta > 750) {
-        delta = 0;
-        SetLiked(false);
-        dispatch(playerUnLiked());
-        socket.emit("player-unLiked", { liked: false, room });
-      }
-    }
-  });
 
   return <LikeButton onClick={handleLike}>Like</LikeButton>;
 };

@@ -7,15 +7,26 @@ import useInterval from "../../hooks/useInterval";
 import {
   playerMoves,
   playerWalks,
-  playerInteracts,
   playerStopsInteraction,
+  playerUnLiked,
+  playerInteracts,
 } from "../../actions";
 import Bubble from "./Bubble";
 
 const SPEED = 1.5; //player's movement speed
 let delta = 0; //time difference used for walking animation
+let likeDelta = 0; //for like message bubble
+let interactionDelta = 0;
 
-const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
+const Controller = ({
+  socket,
+  user,
+  room,
+  keyPress,
+  setKeyPress,
+  interacting,
+  setInteracting,
+}) => {
   const { posX, posY, spriteY, spriteX, liked, interaction } = useSelector(
     (state) => state.playerStates
   );
@@ -23,36 +34,42 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
 
   //MAIN GAME LOOP
   useInterval(() => {
-    //interaction key
-    if (keyPress.Space) {
-      //if player is in an interactive
-      if (posX < -450 && posY < -150) {
-        dispatch(playerInteracts());
+    if (liked) {
+      socket.emit("player-liked", { liked: true, room });
+      likeDelta++;
+      if (likeDelta > 700) {
+        likeDelta = 0;
+        dispatch(playerUnLiked());
+        socket.emit("player-unLiked", { liked: false, room });
       }
     }
-    if (interaction) {
-      delta++;
-      if (delta > 1000) {
+    //if player is interacting with NPC
+    if (interacting) {
+      if (posX < -450 && posY < -150) {
+        dispatch(playerInteracts());
+        interactionDelta++;
+        if (interactionDelta > 3000) {
+          dispatch(playerStopsInteraction());
+          setInteracting(false);
+          interactionDelta = 0;
+        }
+      } else {
         dispatch(playerStopsInteraction());
-        delta = 0;
+        setInteracting(false);
       }
     }
     //Mouvement keys
     if (keyPress.KeyA) {
-      if (posX < -544) {
-        return;
-      }
-      //collision with undertale sprite right side
-      if (posX < -475 && posY < -175) {
-        return;
-      }
-      //collision with bar right side
-      // ONLY CHANGE 2ND AND 3RD CONDITION IF NEED TO FIX COLLISION BUG
-      if (posX < 580 && posX > -100 && posY < -200) {
+      //collision with left wall || right side of NPC || right side of bar table
+      if (
+        posX < -544 ||
+        (posX < -475 && posY < -175) ||
+        (posX < 580 && posX > -100 && posY < -200)
+      ) {
         return;
       }
       delta++;
-      if (delta > 60) {
+      if (delta > 30) {
         dispatch(playerWalks());
         delta = 0;
       }
@@ -66,15 +83,12 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
       });
     }
     if (keyPress.KeyD) {
-      if (posX > 900) {
-        return;
-      }
-      //collision with bar left side
-      if (posX < 400 && posX > -230 && posY < -200) {
+      //collision with right wall || left side of bar table
+      if (posX > 900 || (posX < 400 && posX > -230 && posY < -200)) {
         return;
       }
       delta++;
-      if (delta > 60) {
+      if (delta > 30) {
         dispatch(playerWalks());
         delta = 0;
       }
@@ -89,19 +103,16 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
       });
     }
     if (keyPress.KeyW) {
-      if (posY < -244) {
-        return;
-      }
-      //collision with undertale sprite bottom
-      if (posX < -480 && posY < -170) {
-        return;
-      }
-      //collision with bar bottom
-      if (posX < 575 && posX > -225 && posY < -190) {
+      //collision with top wall || Bottom of NPC || bottom of bar table
+      if (
+        posY < -244 ||
+        (posX < -480 && posY < -170) ||
+        (posX < 575 && posX > -225 && posY < -190)
+      ) {
         return;
       }
       delta++;
-      if (delta > 60) {
+      if (delta > 30) {
         dispatch(playerWalks());
         delta = 0;
       }
@@ -116,11 +127,12 @@ const Controller = ({ socket, user, room, keyPress, setKeyPress }) => {
       });
     }
     if (keyPress.KeyS) {
+      //collision with bottom wall
       if (posY > 520) {
         return;
       }
       delta++;
-      if (delta > 60) {
+      if (delta > 30) {
         dispatch(playerWalks());
         delta = 0;
       }

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
-import { playerJoins, updateGameState } from "../../actions";
+import { playerJoins, updateGameState, playerInteracts } from "../../actions";
 import LogOut from "./LogOut";
 import Like from "./Like";
 import { useKeyPress } from "../../hooks/useKeyPress";
@@ -14,6 +14,7 @@ import Npc from "./Npc";
 import Controller from "./Controller";
 
 const Game = ({ socket, user, room }) => {
+  const [interacting, setInteracting] = useState(false);
   const { keyPress, handleKeyPress, handleKeyUp } = useKeyPress();
   //retrieving current X and Y position of our user's sprite
   const { posX, posY, spriteY, spriteX } = useSelector(
@@ -56,16 +57,26 @@ const Game = ({ socket, user, room }) => {
   }, []);
 
   const handleMusic = () => {
+    audioRef.current.currentTime = 0;
     audioRef.current.play();
+  };
+
+  const handleInteraction = (e) => {
+    if (e.code === "Space") {
+      console.log("true");
+      setInteracting(true);
+    }
   };
 
   useEffect(() => {
     const gameZone = gameZoneRef.current;
 
     gameZoneRef.current.addEventListener("keydown", handleKeyPress);
+    gameZoneRef.current.addEventListener("keydown", handleInteraction);
     gameZoneRef.current.addEventListener("keyup", handleKeyUp);
     return () => {
       gameZone.removeEventListener("keydown", handleKeyPress);
+      gameZone.removeEventListener("keydown", handleInteraction);
       gameZone.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
@@ -84,6 +95,8 @@ const Game = ({ socket, user, room }) => {
             user={user}
             room={room}
             keyPress={keyPress}
+            interacting={interacting}
+            setInteracting={setInteracting}
           />
           {activePlayers &&
             activePlayers.map((player, index) => (

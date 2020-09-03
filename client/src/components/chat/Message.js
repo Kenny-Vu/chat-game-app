@@ -45,9 +45,11 @@ const Author = styled.div`
 
 const Text = styled.span`
   display: inline-block;
+  text-align: center;
   position: relative;
   background: #5fc9f8;
   padding: 0.5rem;
   border-radius: 16px;
   margin: 0 0.5rem;
+  max-width: 200px;
 `;
