@@ -22,7 +22,6 @@ export const playerStopsInteraction = () => ({
 });
 //ACTIONS FOR GAMESTATE
 export const updateGameState = (players) => {
-  console.log(players);
   return {
     type: "UPDATE_GAMESTATE",
     players,

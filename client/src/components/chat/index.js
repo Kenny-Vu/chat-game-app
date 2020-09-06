@@ -13,15 +13,7 @@ const Chat = ({ socket, room, user }) => {
   const [feed, setFeed] = useState([]);
   const messageRef = useRef(null); //ref used for autoscrolling
 
-  // const { activePlayers } = useSelector((state) => state.gameStates);
-  // const { posX, posY } = useSelector((state) => state.playerStates);
-
-  // let activePlayersObj = {};
-  // if (activePlayers) {
-  //   activePlayers.forEach((player) => {
-  //     activePlayersObj[`${player.id}`] = player;
-  //   });
-  // }
+  const { posX, posY } = useSelector((state) => state.playerStates);
 
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
@@ -34,27 +26,35 @@ const Chat = ({ socket, room, user }) => {
         ]);
       });
     });
+    //user receives welcome mesage
     socket.on("welcome", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
     });
+    //user is notified that a participanthas joins the room
     socket.on("friend-joined", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);
     });
+    //user is notified when a participant leaves the room
     socket.on("friend-left", ({ text }) => {
       setFeed((feed) => [...feed, { text }]);
+    });
+    //displays messages of participants
+    socket.on("display-message", ({ text, id, user, friendX, friendY }) => {
+      //we'll add the participant's message to the feed only if he's near enough
+      if (
+        friendX < posX + 200 &&
+        friendX > posX - 200 &&
+        friendY < posY + 200 &&
+        friendY > posY - 200
+      ) {
+        setFeed((feed) => [...feed, { text, id, user }]);
+      }
     });
     return () => {
       socket.disconnect();
       socket.close();
     };
   }, []);
-
-  //client receives user info from backend and adds user welcome message
-  useEffect(() => {
-    socket.on("display-message", ({ text, id, user }) => {
-      setFeed((feed) => [...feed, { text, id, user }]);
-    });
-  }, [setFeed]);
   //handles autoscroll
   const scrollToBottom = () => {
     messageRef.current.scrollIntoView({
@@ -81,16 +81,6 @@ const Chat = ({ socket, room, user }) => {
       <Conversation>
         {feed.length > 0 ? (
           feed.map((message, index) => {
-            // THIS USES CALCULATES IF THE PLAYER IS INSIDE ANOTHER PLAYER'S ZONE, BUT TAKES TOO MUCH PROCESSING POWER AND CAUSES LAGS WHEN THERE'S TOO MANY MESSAGES
-            // if (
-            //   activePlayersObj[`${message.id}`] &&
-            //   (activePlayersObj[`${message.id}`].posX > posX + 200 ||
-            //     activePlayersObj[`${message.id}`].posX < posX - 200 ||
-            //     activePlayersObj[`${message.id}`].posY > posY + 200 ||
-            //     activePlayersObj[`${message.id}`].posY < posY - 200)
-            // ) {
-            //   return;
-            // } else {
             return (
               <Message
                 key={keyGenerator() + index}
@@ -152,7 +142,7 @@ const ChatInput = styled.textarea`
   height: 3rem;
   width: 100%;
   resize: none;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   &&:focus {
     outline: none;
     border: #4287f5 solid;

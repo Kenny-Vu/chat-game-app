@@ -63,7 +63,6 @@ const Game = ({ socket, user, room }) => {
 
   const handleInteraction = (e) => {
     if (e.code === "Space") {
-      console.log("true");
       setInteracting(true);
     }
   };
@@ -100,9 +99,13 @@ const Game = ({ socket, user, room }) => {
           />
           {activePlayers &&
             activePlayers.map((player, index) => (
-              <>
+              <div key={`div-${index}`}>
                 {player.liked && (
-                  <Bubble friendX={player.posX} friendY={player.posY} />
+                  <Bubble
+                    friendX={player.posX}
+                    friendY={player.posY}
+                    key={`bubble-${index}`}
+                  />
                 )}
                 <Sprite
                   key={`friend-${index}`}
@@ -113,7 +116,7 @@ const Game = ({ socket, user, room }) => {
                     zIndex: 1,
                   }} //we have to alter the position of the character to center him in the Camera div
                 />
-              </>
+              </div>
             ))}
           <Npc></Npc>
         </Map>

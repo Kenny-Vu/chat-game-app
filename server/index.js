@@ -8,6 +8,7 @@ const {
   addNewPlayer,
   updatePlayer,
   getPlayersInRoom,
+  getPlayer,
   removePlayer,
 } = require("./gameState");
 const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
@@ -55,10 +56,15 @@ io.on("connection", (socket) => {
     const user = getUser(id);
     //Storing user message to Mongo
     storeMessageData({ text: input, user: user.user, room: user.room });
-
-    socket
-      .to(user.room)
-      .emit("display-message", { text: input, id, user: user.user });
+    //we also want to send back the coordinates of the player that sent the message
+    const friend = getPlayer(id);
+    socket.to(user.room).emit("display-message", {
+      text: input,
+      id,
+      user: user.user,
+      friendX: friend.posX,
+      friendY: friend.posY,
+    });
   });
 
   // ------ GAME SOCKET SIGNALS -------

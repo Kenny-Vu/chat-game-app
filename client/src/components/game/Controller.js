@@ -23,17 +23,17 @@ const Controller = ({
   user,
   room,
   keyPress,
-  setKeyPress,
   interacting,
   setInteracting,
 }) => {
-  const { posX, posY, spriteY, spriteX, liked, interaction } = useSelector(
+  const { posX, posY, spriteY, spriteX, liked } = useSelector(
     (state) => state.playerStates
   );
   const dispatch = useDispatch();
 
   //MAIN GAME LOOP
   useInterval(() => {
+    //if player activates the like message bubble
     if (liked) {
       socket.emit("player-liked", { liked: true, room });
       likeDelta++;

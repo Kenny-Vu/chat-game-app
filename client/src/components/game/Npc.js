@@ -2,8 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 
-import MsgBubble from "./Bubble";
-
+//Component for the Non-Playable character
 const Npc = () => {
   const { interaction } = useSelector((state) => state.playerStates);
   return (
