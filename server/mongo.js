@@ -4,9 +4,6 @@ const assert = require("assert");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
 
-// const REACT_APP_MONGO_URI =
-//   "mongodb+srv://client:12345@chatgame-cluster.fvrub.gcp.mongodb.net/chatGameDB?retryWrites=true&w=majority";
-
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
