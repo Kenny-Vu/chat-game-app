@@ -4,7 +4,7 @@
   "description": "Server with data for chat/game app project",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "repository": "https://github.com/Kenny-Vu/cb-i-4-final-project",
   "author": "Kenny Vu",
