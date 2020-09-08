@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
 const {
@@ -23,17 +24,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server); //wraps io around server
 
-//MONGO <-------------->
-const MongoClient = require("mongodb").MongoClient;
-const assert = require("assert");
-
-require("dotenv").config();
-const { MONGO_URI } = process.env;
-
-const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
 // ------------ CHAT SOCKET SIGNALS ---------
 io.on("connection", (socket) => {
   console.log("a user connected!"); // When the client connects The server is notified
@@ -117,6 +107,7 @@ io.on("connection", (socket) => {
 });
 
 app.use(router);
+app.use(cors());
 
 server.listen(PORT, () => {
   console.info(`listening on http://localhost:${PORT}`);
