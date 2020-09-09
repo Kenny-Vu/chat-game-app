@@ -33,7 +33,8 @@ const Home = () => {
 
   return (
     <Wrapper>
-      <h1>Welcome</h1>
+      <h1>Welcome to the Hangout</h1>
+      <p>Use the W,A,S,D keys to move once you're in the room</p>
       <form>
         <div>
           <Input
