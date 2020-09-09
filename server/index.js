@@ -32,7 +32,9 @@ io.on("connection", (socket) => {
     socket.join(room);
     //conecting to Mongo. Needs to be in async await for past messages to load first before the welcome message
     await getAllMessagesInRoom(room).then((result) => {
-      socket.emit("populate-feed", { messages: result });
+      if (result.length > 0) {
+        socket.emit("populate-feed", { messages: result });
+      }
     });
 
     socket.emit("welcome", { text: `Welcome ${user}!`, id: socket.id });
@@ -107,7 +109,7 @@ io.on("connection", (socket) => {
 });
 
 app.use(router);
-app.use(cors());
+// app.use(cors());
 
 server.listen(PORT, () => {
   console.info(`listening on http://localhost:${PORT}`);
