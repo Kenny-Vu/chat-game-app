@@ -18,14 +18,14 @@ const Chat = ({ socket, room, user }) => {
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
     socket.emit("user-joins", { user, room });
-    socket.on("populate-feed", ({ messages }) => {
-      messages.forEach((message) => {
-        setFeed((feed) => [
-          ...feed,
-          { text: message.text, id: message.id, user: message.user },
-        ]);
-      });
-    });
+    // socket.on("populate-feed", ({ messages }) => {
+    //   messages.forEach((message) => {
+    //     setFeed((feed) => [
+    //       ...feed,
+    //       { text: message.text, id: message.id, user: message.user },
+    //     ]);
+    //   });
+    // });
     //user receives welcome mesage
     socket.on("welcome", ({ text, id }) => {
       setFeed((feed) => [...feed, { text, id }]);

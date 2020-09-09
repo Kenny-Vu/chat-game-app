@@ -1,7 +1,7 @@
 const express = require("express");
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+// const morgan = require("morgan");
+// const bodyParser = require("body-parser");
+// const cors = require("cors");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
 const {
@@ -12,7 +12,7 @@ const {
   getPlayer,
   removePlayer,
 } = require("./gameState");
-const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
+// const { storeMessageData, getAllMessagesInRoom } = require("./mongo");
 
 const socketio = require("socket.io");
 const http = require("http");
@@ -31,11 +31,11 @@ io.on("connection", (socket) => {
     addUser(socket.id, user, room);
     socket.join(room);
     //conecting to Mongo. Needs to be in async await for past messages to load first before the welcome message
-    await getAllMessagesInRoom(room).then((result) => {
-      if (result.length > 0) {
-        socket.emit("populate-feed", { messages: result });
-      }
-    });
+    // await getAllMessagesInRoom(room).then((result) => {
+    //   if (result.length > 0) {
+    //     socket.emit("populate-feed", { messages: result });
+    //   }
+    // });
 
     socket.emit("welcome", { text: `Welcome ${user}!`, id: socket.id });
     socket.broadcast.to(room).emit("friend-joined", {
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
   socket.on("input-send", ({ input, id }) => {
     const user = getUser(id);
     //Storing user message to Mongo
-    storeMessageData({ text: input, user: user.user, room: user.room });
+    // storeMessageData({ text: input, user: user.user, room: user.room });
     //we also want to send back the coordinates of the player that sent the message
     const friend = getPlayer(id);
     socket.to(user.room).emit("display-message", {
