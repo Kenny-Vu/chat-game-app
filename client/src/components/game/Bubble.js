@@ -11,8 +11,10 @@ const Bubble = ({ posX, posY, friendX, friendY }) => {
         zIndex: 3,
       }}
     >
-      <span>❤️</span>
-      <img src="/assets/bubble-tip.svg" />
+      <span role="img" aria-label="heart emoji">
+        ❤️
+      </span>
+      <img alt="message bubble" src="/assets/bubble-tip.svg" />
     </MsgBubble>
   );
 };

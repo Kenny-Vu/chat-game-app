@@ -33,7 +33,7 @@ const Home = () => {
 
   return (
     <Wrapper>
-      <h1>Welcome to the Hangout</h1>
+      <h1>Welcome to the Sprite Spot</h1>
       <p>Use the W,A,S,D keys to move once you're in the room</p>
       <form>
         <div>
@@ -81,6 +81,9 @@ const Wrapper = styled.div`
   color: white;
   h1 {
     font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  p {
     margin-bottom: 2rem;
   }
   form {

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
-import { playerJoins, updateGameState, playerInteracts } from "../../actions";
+import { playerJoins, updateGameState } from "../../actions";
 import LogOut from "./LogOut";
 import Like from "./Like";
 import { useKeyPress } from "../../hooks/useKeyPress";
@@ -127,7 +127,12 @@ const Game = ({ socket, user, room }) => {
         </Like>
         <div>
           <audio ref={audioRef} src="assets/Abstraction-Candy.wav" />
-          <Music onClick={handleMusic}>Music!🎵</Music>
+          <Music onClick={handleMusic}>
+            Music!
+            <span role="img" aria-label="music notes">
+              🎵
+            </span>
+          </Music>
         </div>
         <LogOut socket={socket}>Logout</LogOut>
       </ActionBar>
