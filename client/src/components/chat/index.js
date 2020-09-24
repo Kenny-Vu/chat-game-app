@@ -18,6 +18,7 @@ const Chat = ({ socket, room, user }) => {
   //On mount, user connects to socket.io and sends info of User that just joined to BE
   useEffect(() => {
     socket.emit("user-joins", { user, room });
+    //Populate the chat feed from MongoDB
     // socket.on("populate-feed", ({ messages }) => {
     //   messages.forEach((message) => {
     //     setFeed((feed) => [
